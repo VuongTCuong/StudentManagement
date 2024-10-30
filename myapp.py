@@ -16,9 +16,11 @@ class StudentApp:
         self.users = {"username": "password"}
 
         #connect db
-        self.conn = sqlite3.connect('student_management.db')
-        self.cursor = self.conn.cursor()
-
+        try:
+            self.conn = sqlite3.connect('student_management.db')
+            self.cursor = self.conn.cursor()
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không có cơ sở dữ liệu: {e}")
         # Main application layout
         self.create_login_screen()
 
@@ -158,7 +160,6 @@ class StudentApp:
             self.search_results.insert("", "end", values=row)
         conn.close()
         
-
     def create_search_screen(self):
         # Clear the window
         for widget in self.root.winfo_children():

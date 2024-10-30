@@ -1,0 +1,1 @@
+lớp DAL. Truy vấn đến cơ sở dữ liệu

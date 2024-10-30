@@ -1,0 +1,1 @@
+Lớp DTO, chứa những dữ liệu được xây dựng dưới dạng lớp đối tượng. 
