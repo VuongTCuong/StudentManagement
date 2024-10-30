@@ -1,32 +1,32 @@
 import customtkinter as ctk
 from tkinter import messagebox, ttk, W
 from PIL import Image, ImageTk #library Pillow for handling images
-import sqlite3
 import HomeGUI
 
+#for importing DTO and BUS module
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from DTO import userDTO
+from BUS import userBUS
 
 class LoginGUI:
-
     def __init__(self):
+        self.userBUS = userBUS.userBUS()
+
         # Main login window
         self.root = ctk.CTk()
-        self.root.title("Student Management System")
+        self.root.title("Student Management System - Login")
         self.root.geometry("500x240")
 
         # Set appearance mode and default theme
-        ctk.set_appearance_mode("dark")
+        ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 
         # Đặt cấu trúc cột cho cửa sổ chính để chia đều trái và phải
         self.root.columnconfigure(0, weight=1)
         self.root.columnconfigure(1, weight=1)
-
-        # connect db and handling error
-        try:
-            self.conn = sqlite3.connect('student_management.db')
-            self.cursor = self.conn.cursor()
-        except Exception as e:
-            messagebox.showerror("Error", f"Database is not created: {e}")
 
         # Adding widgets and create a login screen
         self.create_login_screen()
@@ -36,12 +36,12 @@ class LoginGUI:
     
     def create_login_screen(self):
         #logo frame
-        logo_frame = ctk.CTkFrame(self.root)
+        logo_frame = ctk.CTkFrame(self.root, fg_color="#ebebeb")
         logo_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
         #load logo
         try: 
-            logo = Image.open("E:\\Study Stuff\\StudentManagement\\GUI\\assets\\logo.png")
+            logo = Image.open("F:\\.Self-studying\\StudentManagement\\GUI\\assets\\logo.png")
             # logo = logo.resize((200, 200), Image.LANCZOS) #resize
             # self.logo_image = ImageTk.PhotoImage(logo) #Put the logo in logo_image variable prevent it from being deleted
             logo_img = ctk.CTkImage(light_image=logo, dark_image=logo, size=(140,140))
@@ -51,12 +51,12 @@ class LoginGUI:
             messagebox.showerror("Error", f"Can not load logo: {e}")
         
         #create a frame that contains components of login box
-        loginbox_frame = ctk.CTkFrame(self.root)
+        loginbox_frame = ctk.CTkFrame(self.root, fg_color="#ebebeb")
         loginbox_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
         #Create labels
         #title Label
-        login_title = ctk.CTkLabel(loginbox_frame, text="Login", font=("Arial", 24, "bold"), text_color="light blue")
+        login_title = ctk.CTkLabel(loginbox_frame, text="Login", font=("Arial", 24, "bold"), text_color="dark blue")
         login_title.grid(row = 0, column = 0, columnspan = 3, pady = 5)
 
         #username label
@@ -87,18 +87,19 @@ class LoginGUI:
         username = self.username_entry.get()
         password = self.password_entry.get()
 
-        # Query the users table
-        self.cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
-        user = self.cursor.fetchone()
-
-        if user:
+        #create object DTO user
+        user = userDTO.userDTO(username,password)
+        #check user using BUS method
+        if self.userBUS.login(user):
             self.root.destroy() #close login
-            # print(f"Hello {user}")
-            HomeGUI.HomeGUI()
+            HomeGUI.HomeGUI(username) #change to HomeGUI
         else:
             messagebox.showerror("Login Failed", "Invalid username or password.")
        
     def register(self):
         pass
+
+
+
 if __name__ == "__main__":
     LoginGUI()
