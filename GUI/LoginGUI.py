@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox, ttk, W
 from PIL import Image, ImageTk #library Pillow for handling images
-import HomeGUI
+
 
 #for importing DTO and BUS module
 import sys
@@ -10,6 +10,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from DTO import userDTO
 from BUS import userBUS
+
+#import GUIs
+import HomeGUI
+import RegisterGUI
 
 class LoginGUI:
     def __init__(self):
@@ -76,14 +80,14 @@ class LoginGUI:
         self.password_entry.grid(row = 2, column = 1, padx = 10, pady = 5)
 
         #login button
-        login_btn = ctk.CTkButton(loginbox_frame, text="Login", command=self.check_login)
+        login_btn = ctk.CTkButton(loginbox_frame, text="Login", command=self.on_login)
         login_btn.grid(row = 3, column = 0, columnspan = 2, ipadx = 50, pady = 5)
 
         #register button
-        btn_register = ctk.CTkButton(loginbox_frame, text="Register", command=self.register)
+        btn_register = ctk.CTkButton(loginbox_frame, text="Register", command=self.on_register)
         btn_register.grid(row = 4, column = 0, columnspan = 2,ipadx = 50, pady = 5)
 
-    def check_login(self):
+    def on_login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
@@ -96,8 +100,8 @@ class LoginGUI:
         else:
             messagebox.showerror("Login Failed", "Invalid username or password.")
        
-    def register(self):
-        pass
+    def on_register(self):
+        RegisterGUI.RegisterGUI()
 
 
 

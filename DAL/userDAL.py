@@ -1,8 +1,8 @@
 import sqlite3
+import os
 
 class userDAL: 
     def __init__(self, path = 'student_management.db'):
-        
         #connect to database SQLite
         try:
             self.conn = sqlite3.connect(path)
@@ -16,7 +16,7 @@ class userDAL:
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL UNIQUE,
+                    username TEXT NOT NULL,
                     password TEXT NOT NULL,
                     email TEXT NOT NULL UNIQUE
                 )
@@ -56,15 +56,26 @@ class userDAL:
             print(e)
 
     #check user info in database
+    #LOGIN VIA USERNAME
     def check_user(self, username, pwd):
         try:
             self.cursor.execute('''
                     SELECT * FROM users WHERE username = ? AND password = ?
-                                ''', (username,pwd))
+                                ''', (username, pwd))
             user = self.cursor.fetchone()
-            return user is not None #return True if exist usert, False if not exist
+            return user is not None #return True if exist user, False if not exist
         except sqlite3.Error as e:
             print(f"Error can not check user information: {e}")
+
+
+    def existed_email(self, email):
+        try:
+            self.cursor.execute('''SELECT * FROM users WHERE email = ?''', (email,))
+            user = self.cursor.fetchone()
+            return user is not None #return True if exist, False if not exist
+        except sqlite3.Error as e:
+            print(f"Error can not check email information: {e}")
+
 
     #close connection
     def close(self):
