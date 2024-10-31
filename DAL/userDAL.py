@@ -16,22 +16,24 @@ class userDAL:
             self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL,
+                    username TEXT NOT NULL UNIQUE,
+                    fullname TEXT NOT NULL,
                     password TEXT NOT NULL,
                     email TEXT NOT NULL UNIQUE
                 )
             ''')
+            print('Created Database.')
         except sqlite3.Error as e:
             print(f"Error: Can not create table {e}")
     
 
     #add user to table return True if added successfully, return False if added unsucessfully
-    def add_user(self, username, pwd, email):
+    def add_user(self, username, fullname, pwd, email):
         try:
              self.cursor.execute('''
-                                 INSERT INTO users (username, password, email)
-                                 VALUES (?, ?, ?)
-                                 ''', (username, pwd, email))
+                                 INSERT INTO users (username, fullname, password, email)
+                                 VALUES (?, ?, ?, ?)
+                                 ''', (username, fullname, pwd, email))
              self.conn.commit()
         except sqlite3.IntegrityError as e:
             print(f"Error: Username already exists.")
@@ -76,7 +78,6 @@ class userDAL:
         except sqlite3.Error as e:
             print(f"Error can not check email information: {e}")
 
-
     #close connection
     def close(self):
         try: 
@@ -85,6 +86,6 @@ class userDAL:
             print(f"Error disconnecting database {e}")
 
 
-    
 
-        
+db = userDAL()
+db.create_user_table()

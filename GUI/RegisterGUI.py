@@ -23,7 +23,7 @@ class RegisterGUI:
         # Main login window
         self.root = ctk.CTk()
         self.root.title("Student Management System - Register")
-        self.root.geometry("400x400")
+        self.root.geometry("400x450")
 
         # Set appearance mode and default theme
         ctk.set_appearance_mode("light") #Change to white mode
@@ -64,29 +64,37 @@ class RegisterGUI:
         self.username_entry = ctk.CTkEntry(register_frame, placeholder_text="Enter Username")
         self.username_entry.grid(row=2, column=1, columnspan=2, pady=12, padx=10)
 
+        #fullname label
+        fullname_label = ctk.CTkLabel(register_frame, text="Fullname:",anchor="w")
+        fullname_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        #Create fullname entry
+        self.fullname_entry = ctk.CTkEntry(register_frame, placeholder_text="Enter Fullname")
+        self.fullname_entry.grid(row=3, column=1, columnspan=2, pady=12, padx=10)
+
         #Create password label
         password_label = ctk.CTkLabel(register_frame, text="Password:", anchor="w")
-        password_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        password_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         #Create password entry
         self.password_entry = ctk.CTkEntry(register_frame, placeholder_text="Enter Password", show="*")
-        self.password_entry.grid(row=3, column=1, columnspan=2, pady=12, padx=10)
+        self.password_entry.grid(row=5, column=1, columnspan=2, pady=12, padx=10)
 
         #Create confirm password label
         confirm_password_label = ctk.CTkLabel(register_frame, text="Confirm Password:",anchor="w")
-        confirm_password_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        confirm_password_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
         # Create confirm password entry
         self.confirm_password_entry = ctk.CTkEntry(register_frame, placeholder_text="Confirm Password", show="*")
-        self.confirm_password_entry.grid(row=4, column=1, columnspan=2, pady=12, padx=10)
+        self.confirm_password_entry.grid(row=6, column=1, columnspan=2, pady=12, padx=10)
 
         # Create sign up button
         self.signup_button = ctk.CTkButton(register_frame, text="Register", command=self.on_register)
-        self.signup_button.grid(row=5, column=0, columnspan=3, pady=12, padx=10, sticky="ew")
+        self.signup_button.grid(row=7, column=0, columnspan=3, pady=12, padx=10, sticky="ew")
 
         # Create Exit button
         self.exit_button = ctk.CTkButton(register_frame, text="Exit", command=self.on_exit)
-        self.exit_button.grid(row=6, column=0, columnspan=3, pady=12, padx=10, sticky="ew")
+        self.exit_button.grid(row=8, column=0, columnspan=3, pady=12, padx=10, sticky="ew")
 
     def email_is_valid(self, email):
         # Define the regular expression for validating an email
@@ -98,34 +106,35 @@ class RegisterGUI:
         # get informations
         email = self.email_entry.get()
         username = self.username_entry.get()
+        fullname = self.fullname_entry.get()
         password = self.password_entry.get()
         confirm_password = self.confirm_password_entry.get()
 
         ##CHECKING INPUT
         #check all empty entries
-        if not email or not username or not password or not confirm_password:
+        if not email or not username or not password or not confirm_password or not fullname:
             messagebox.showerror("Error", "All fields are required. Please ensure no fields are left empty.")
-
-        #check email valid, email existed?
-        if self.email_is_valid(email) == False:
-            messagebox.showerror("Error", "Email is invalid.")
-        if self.userBUS.userDAL.existed_email(email):
-            messagebox.showerror("Error", "Email is existed.")
-
-        #check pwd == confirm_pwd
-        if password != confirm_password:
-            messagebox.showerror("Error", "Passwords do not match!")
-
-
-        ##SENDING CODE FOR REGISTERING
-        #random OTP 4 numbers
-        self.OTP = random.randint(1000,9999)
-
-        #send OTP via email
-        if self.send_otp_codes(email):
-            self.create_otp_window(email, username, password) #if sent, create otp input window.
         else:
-            messagebox.showerror("Error", "Cannot send OTP via Email.")
+        #check email valid, email existed?
+            if self.email_is_valid(email) == False:
+                messagebox.showerror("Error", "Email is invalid.")
+            else:
+                if self.userBUS.userDAL.existed_email(email):
+                    messagebox.showerror("Error", "Email is existed.")
+                else:
+                    #check pwd == confirm_pwd
+                    if password != confirm_password:
+                        messagebox.showerror("Error", "Passwords do not match!")
+                    else:
+                        ##SENDING CODE FOR REGISTERING
+                        #random OTP 4 numbers
+                        self.OTP = random.randint(1000,9999)
+
+                        #send OTP via email
+                        if self.send_otp_codes(email):
+                            self.create_otp_window(email, fullname, username, password) #if sent, create otp input window.
+                        else:
+                            messagebox.showerror("Error", "Cannot send OTP via Email.")
     
     def send_otp_codes(self, reciever_email):
         try:
@@ -155,7 +164,7 @@ class RegisterGUI:
             print("Error when sending email", e)
             return False
 
-    def create_otp_window(self, email, username, password):
+    def create_otp_window(self, email, fullname, username, password):
         #create OTP window
         OTP_window = ctk.CTkToplevel(self.root)
         OTP_window.title("Student Management System - OTP Verification")
@@ -182,10 +191,11 @@ class RegisterGUI:
             try:
                 if otp_code.isdigit() and int(otp_code) == self.OTP:
                     #Create account
-                    user = userDTO.userDTO(email, password)
-                    self.userBUS.register(user, username)
+                    user = userDTO.userDTO(username, password)
+                    self.userBUS.register(user, email, fullname, username)
                     messagebox.showinfo("Success", "Account is created.")
                     OTP_window.destroy()
+                    self.root.destroy()
                 else:
                     messagebox.showerror("Error", "OTP is not correct.")
             except Exception as e:
@@ -193,7 +203,6 @@ class RegisterGUI:
 
         submit_button = ctk.CTkButton(OTP_window, text="Verify OTP", command=verify_otp)
         submit_button.pack(pady = 10)
-
 
     def on_exit(self):
         # Ask for confirmation
