@@ -1,89 +1,68 @@
 import customtkinter as ctk
-from tkinter import ttk
-from PIL import Image, ImageTk
-import HomeGUI
+from tkinter import ttk,messagebox
+from BUS import classBUS,studentBUS
+from DTO import studentDTO
 class StudentMgt:
     def __init__(self):
         self.root = ctk.CTk()  
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-        window_width = 1400
-        window_height = 600
-        position_top = int(screen_height / 2 - window_height / 2)
-        position_right = int(screen_width / 2 - window_width / 2)
-        self.root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
-        self.root.resizable(False,False)
-
-        self.create_interactframe()
-        self.create_tableframe()
-        #Run
-        self.root.mainloop()
-    
-    
-    def create_interactframe(self):
-        #parent
-        self.inter_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width/3)
-        self.inter_frame.pack(side='left',padx=20)
         
-        #student form 
-        
-        msv_lab = ctk.CTkLabel(self.inter_frame,text="Mã SV:")
+    def create_interactframe(self,frame):
+        #student form   
+        msv_lab = ctk.CTkLabel(frame,text="Mã SV:")
         msv_lab.place(x=10,y=10)
-        msv_entry = ctk.CTkEntry(self.inter_frame,width=230)
-        msv_entry.place(x=100,y=10)
+        self.msv_entry = ctk.CTkEntry(frame,width=230)
+        self.msv_entry.place(x=100,y=10)
 
-        hoten_lab = ctk.CTkLabel(self.inter_frame,text="Họ Tên:")
+        hoten_lab = ctk.CTkLabel(frame,text="Họ Tên:")
         hoten_lab.place(x=10,y=50)
-        hoten_entry = ctk.CTkEntry(self.inter_frame,width=230)
-        hoten_entry.place(x=100,y=50)
+        self.hoten_entry = ctk.CTkEntry(frame,width=230)
+        self.hoten_entry.place(x=100,y=50)
 
-        namsinh_lab = ctk.CTkLabel(self.inter_frame,text="Năm Sinh:")
+        namsinh_lab = ctk.CTkLabel(frame,text="Năm Sinh:")
         namsinh_lab.place(x=10,y=90)
-        namsinh_entry = ctk.CTkEntry(self.inter_frame,width=230)
-        namsinh_entry.place(x=100,y=90)
+        self.namsinh_entry = ctk.CTkEntry(frame,width=230)
+        self.namsinh_entry.place(x=100,y=90)
 
-        gioitinh_lab = ctk.CTkLabel(self.inter_frame,text="Giới Tính:")
+        gioitinh_lab = ctk.CTkLabel(frame,text="Giới Tính:")
         gioitinh_lab.place(x=10,y=130)
-        gioitinh_cb = ctk.CTkComboBox(self.inter_frame,width=230,values=['Nam','Nữ'],state='readonly')
-        gioitinh_cb.place(x=100,y=130)
+        self.gioitinh_cb = ctk.CTkComboBox(frame,width=230,values=['Nam','Nữ'],state='readonly')
+        self.gioitinh_cb.place(x=100,y=130)
 
-        email_lab = ctk.CTkLabel(self.inter_frame,text="Email:")
+        email_lab = ctk.CTkLabel(frame,text="Email:")
         email_lab.place(x=10,y=170)
-        email_entry = ctk.CTkEntry(self.inter_frame,width=230)
-        email_entry.place(x=100,y=170)
+        self.email_entry = ctk.CTkEntry(frame,width=230)
+        self.email_entry.place(x=100,y=170)
 
-        malop_lab = ctk.CTkLabel(self.inter_frame,text="Mã Lớp:")
+        malop_lab = ctk.CTkLabel(frame,text="Mã Lớp:")
         malop_lab.place(x=10,y=210)
-        malop_cb = ctk.CTkComboBox(self.inter_frame,width=230)
-        malop_cb.place(x=100,y=210)
+
+        #Get all class
+        clas_BUS = classBUS.classBUS()
+        all_class = clas_BUS.get_all_class()
+        malop = [str(malop[0]) for malop in all_class] 
+        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=malop,state='readonly')
+        self.malop_cb.place(x=100,y=210)
 
         #button 
-        add_button = ctk.CTkButton(self.inter_frame,text='Thêm',width=100)
+        add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_student)
         add_button.place(x=10,y=280)
-        reset_button = ctk.CTkButton(self.inter_frame,text='Reset',width=100)
-        reset_button.place(x=120,y=280)
-        update_button = ctk.CTkButton(self.inter_frame,text='Cập nhật',width=100)
-        update_button.place(x=230,y=280)
-        delete_button = ctk.CTkButton(self.inter_frame,text='Xoá',width=100)
-        delete_button.place(x=340,y=280)
-        menu_button = ctk.CTkButton(self.inter_frame,text='Về Menu',width=150,command='BacktoMenu')
-        menu_button.place(relx=0.3,y=320)
+        reset_button = ctk.CTkButton(frame,text='Reset',width=90)
+        reset_button.place(x=105,y=280)
+        update_button = ctk.CTkButton(frame,text='Cập nhật',width=90)
+        update_button.place(x=200,y=280)
+        delete_button = ctk.CTkButton(frame,text='Xoá',width=90)
+        delete_button.place(x=295,y=280)
 
-    def create_tableframe(self):
-        #parent
-        self.table_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width*2/3)
-        self.table_frame.pack(side='right',padx=20)
-
-
+    def create_tableframe(self,frame):
         #student table
-        search_lab = ctk.CTkLabel(self.table_frame,text="Tìm kiếm:")
+        search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        search_entry = ctk.CTkEntry(self.table_frame,width=230,placeholder_text='Nhập MSSV hoặc tên để tìm kiếm')
+        search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập MSSV hoặc tên để tìm kiếm')
         search_entry.place(x=100,y=10)
-        search_button = ctk.CTkButton(self.table_frame,width=100,text='Tìm kiếm')
+        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm')
         search_button.place(x=350,y=10)
 
-        self.table = ttk.Treeview(self.table_frame,height=23)
+        self.table = ttk.Treeview(frame,height=23)
         self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email', 'Mã Lớp')
         self.table.heading('Mã SV', text='Mã SV')
         self.table.heading('Họ Tên', text='Họ Tên')
@@ -102,6 +81,27 @@ class StudentMgt:
         self.table.column('Mã Lớp', width=100)
         self.table.place(x=10,y=50)
     
-    def BacktoMenu(self):
+    def add_student(self):
+        #valid_flag = 1 : hợp lệ; valid_flag=0: không hợp lệ
+        valid_flag = 1
+        masv = self.msv_entry.get()
+        hoten = self.hoten_entry.get()
+        namsinh = self.namsinh_entry.get()
+        gioitinh = self.gioitinh_cb.get()
+        email = self.email_entry.get()
+        malop = self.malop_cb.get()
+
+        if masv=='' or hoten =='' or namsinh=='' or gioitinh=='' or email=='' or malop=='':
+            valid_flag = 0
+
+        if valid_flag!=0:
+            student = studentBUS.studentBUS()
+            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,malop)
+            if(student.add_student(student_obj)):
+                messagebox.showinfo('Success','Added Successfuly')
+            
+            self.get_student_to_table()
+        else: messagebox.showerror('Error','Invalid input!')
+
+    def get_student_to_table(self):
         pass
-StudentMgt()

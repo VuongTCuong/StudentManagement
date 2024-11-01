@@ -6,14 +6,15 @@ from PIL import Image, ImageTk #library Pillow for handling images
 #for importing DTO and BUS module
 import sys
 import os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from DTO import userDTO
 from BUS import userBUS
 
 #import GUIs
-import HomeGUI
 import RegisterGUI
+import Changetab
 
 class LoginGUI:
     def __init__(self):
@@ -45,7 +46,8 @@ class LoginGUI:
 
         #load logo
         try: 
-            logo = Image.open("F:\\.Self-studying\\StudentManagement\\GUI\\assets\\logo.png")
+            logo = Image.open(os.path.join(os.path.dirname(__file__), "assets", "logo.png"))
+
             # logo = logo.resize((200, 200), Image.LANCZOS) #resize
             # self.logo_image = ImageTk.PhotoImage(logo) #Put the logo in logo_image variable prevent it from being deleted
             logo_img = ctk.CTkImage(light_image=logo, dark_image=logo, size=(140,140))
@@ -96,14 +98,12 @@ class LoginGUI:
         #check user using BUS method
         if self.userBUS.login(user):
             self.root.destroy() #close login
-            HomeGUI.HomeGUI(username) #change to HomeGUI
+            Changetab.Changetab() #change manage screen
         else:
             messagebox.showerror("Login Failed", "Invalid username or password.")
        
     def on_register(self):
         RegisterGUI.RegisterGUI()
-
-
 
 if __name__ == "__main__":
     LoginGUI()
