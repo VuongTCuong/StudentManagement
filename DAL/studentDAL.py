@@ -56,7 +56,6 @@ class studentDAL:
         return False
     def update_student(self,masv,tensv,namsinh,gioitinh,email,malop):
         if self.is_exist_student(masv):
-            if self.cursor.fetchone()!=None:
                 try:
                     self.cursor.execute('''
                         UPDATE SinhVien 
