@@ -3,7 +3,7 @@ from tkinter import ttk
 
 class DepartmentMgt:
     def __init__(self):
-        self.root = ctk.CTk()  
+        self.root = ctk.CTk()   
         
     def create_interactframe(self,frame):
         #student form   

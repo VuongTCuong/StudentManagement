@@ -5,7 +5,7 @@ import DepartmentMgt
 class Changetab:
     def __init__(self):
         self.root = ctk.CTk()
-
+        self.root.title("Student Management System - Student Management") 
         #center window
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
@@ -49,6 +49,8 @@ class Changetab:
         khoa_tab_button = ctk.CTkButton(self.top_frame, text='Khoa',width=80,command=self.changeto_department_tab)
         khoa_tab_button.place(x=175, y=y_center)
 
+        #need EXIT button
+
     def left_frame(self):
         self.left_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width/3)
         self.left_frame.pack(side='left',padx=20)
@@ -82,6 +84,7 @@ class Changetab:
             self.destroy_LeftRight_children()
 
             student = StudentMgt.StudentMgt()
+            self.root.title("Student Management System - Student Management") 
             student.create_interactframe(self.left_frame)
             student.create_tableframe(self.right_frame)
             self.cur_tab ='StudentMgt'
@@ -91,6 +94,7 @@ class Changetab:
             self.destroy_LeftRight_children()
 
             class_obj = ClassMgt.ClassMgt()
+            self.root.title("Student Management System - Class Management")
             class_obj.create_interactframe(self.left_frame)
             class_obj.create_tableframe(self.right_frame)
             self.cur_tab='ClassMgt'
@@ -99,6 +103,7 @@ class Changetab:
         if self.cur_tab!='DepartmentMgt':
             self.destroy_LeftRight_children()
             department = DepartmentMgt.DepartmentMgt()
+            self.root.title("Student Management System - Department Management")
             department.create_interactframe(self.left_frame)
             department.create_tableframe(self.right_frame)
             self.cur_tab='DepartmentMgt'

@@ -23,7 +23,7 @@ class LoginGUI:
         # Main login window
         self.root = ctk.CTk()
         self.root.title("Student Management System - Login")
-        self.root.geometry("500x240")
+        self.root.geometry("540x270")
 
         # Set appearance mode and default theme
         ctk.set_appearance_mode("light")
@@ -66,19 +66,54 @@ class LoginGUI:
         login_title.grid(row = 0, column = 0, columnspan = 3, pady = 5)
 
         #username label
-        username_label = ctk.CTkLabel(loginbox_frame, text="Username:")
+        # username_label = ctk.CTkLabel(loginbox_frame, text="Username:")
+        username_label = ctk.CTkLabel(
+            loginbox_frame,
+            text="Username:",
+            anchor="w",                 
+            text_color="#333333",        
+            font=("Arial", 14, "bold")   
+        )
         username_label.grid(row = 1, column = 0, padx = 10, pady = 5, sticky="e")
 
         #username entry
-        self.username_entry = ctk.CTkEntry(loginbox_frame)
+        self.username_entry = ctk.CTkEntry(
+            loginbox_frame,
+            placeholder_text="Username",  # Adds placeholder
+            width=200,                    # Width of the entry field
+            height=35,                    # Height of the entry
+            border_width=0,               # no border
+            corner_radius=10,             # rounded corner
+            fg_color="#f2f2f2",           # light gray bg for entry.
+            text_color="#333333",         # dark gray text color
+            placeholder_text_color="#888888" # Placeholder text color
+        )
         self.username_entry.grid(row = 1, column = 1, padx = 10, pady = 5)
 
         #password label
-        pwd_label = ctk.CTkLabel(loginbox_frame, text="Password:")
+        # pwd_label = ctk.CTkLabel(loginbox_frame, text="Password:")
+        pwd_label = ctk.CTkLabel(
+            loginbox_frame,
+            text="Password:",
+            anchor="w",                 
+            text_color="#333333",        
+            font=("Arial", 14, "bold")   
+        )
         pwd_label.grid(row = 2, column = 0, padx = 10, pady = 5, sticky="e")
 
         #password entry
-        self.password_entry = ctk.CTkEntry(loginbox_frame, show="*")
+        # Customize the entry field with a modern style
+        self.password_entry = ctk.CTkEntry(
+            loginbox_frame,
+            placeholder_text="Password",  show ="*",
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.password_entry.grid(row = 2, column = 1, padx = 10, pady = 5)
 
         #login button
@@ -88,6 +123,15 @@ class LoginGUI:
         #register button
         btn_register = ctk.CTkButton(loginbox_frame, text="Register", command=self.on_register)
         btn_register.grid(row = 4, column = 0, columnspan = 2,ipadx = 50, pady = 5)
+
+        #forgot password button
+        btn_forgot_pwd = ctk.CTkButton(loginbox_frame, text="Forgot Password", fg_color="transparent", 
+                                        hover_color="light blue",
+                                        text_color="black",
+                                        anchor="center", 
+                                        command=self.on_forgot)
+        btn_forgot_pwd.configure(font=("Arial", 12, "underline")) # Underline the button text
+        btn_forgot_pwd.grid(row = 5, column = 0, columnspan = 2,ipadx = 50, pady = 5)
 
     def on_login(self):
         username = self.username_entry.get()
@@ -104,6 +148,9 @@ class LoginGUI:
        
     def on_register(self):
         RegisterGUI.RegisterGUI()
+
+    def on_forgot(self ):
+        pass
 
 if __name__ == "__main__":
     LoginGUI()

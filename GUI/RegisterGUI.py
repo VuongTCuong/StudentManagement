@@ -23,7 +23,7 @@ class RegisterGUI:
         # Main login window
         self.root = ctk.CTk()
         self.root.title("Student Management System - Register")
-        self.root.geometry("400x450")
+        self.root.geometry("460x480")
 
         # Set appearance mode and default theme
         ctk.set_appearance_mode("light") #Change to white mode
@@ -49,43 +49,128 @@ class RegisterGUI:
         label.grid(row=0, column=0, columnspan=3, ipadx = 3, pady=12, padx=10,)
 
         #Create email label
-        email_label = ctk.CTkLabel(register_frame, text="Email:",anchor="w")
+        # email_label = ctk.CTkLabel(register_frame, text="Email:",anchor="w")
+        email_label = ctk.CTkLabel(
+            register_frame,
+            text="Email:",
+            anchor="w",                 
+            text_color="#333333",        
+            font=("Arial", 14, "bold")   
+        )
         email_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         #Create email entry
-        self.email_entry = ctk.CTkEntry(register_frame, placeholder_text="Enter Email")
+        self.email_entry = ctk.CTkEntry(
+            register_frame,
+            placeholder_text="Enter Email",  
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.email_entry.grid(row=1, column=1, columnspan=2, pady=12, padx=10)
 
         #username label
-        username_label = ctk.CTkLabel(register_frame, text="Username:",anchor="w")
+        # username_label = ctk.CTkLabel(register_frame, text="Username:",anchor="w")
+        username_label = ctk.CTkLabel(
+            register_frame,
+            text="Username:",
+            anchor="w",                 
+            text_color="#333333",        
+            font=("Arial", 14, "bold")   
+        )
         username_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
         #Create username entry
-        self.username_entry = ctk.CTkEntry(register_frame, placeholder_text="Enter Username")
+        self.username_entry = ctk.CTkEntry(
+            register_frame,
+            placeholder_text="Enter Username",  
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.username_entry.grid(row=2, column=1, columnspan=2, pady=12, padx=10)
 
         #fullname label
-        fullname_label = ctk.CTkLabel(register_frame, text="Fullname:",anchor="w")
+        # fullname_label = ctk.CTkLabel(register_frame, text="Fullname:",anchor="w")
+        fullname_label = ctk.CTkLabel(
+            register_frame,
+            text="Fullname:",
+            anchor="w",                 
+            text_color="#333333",        
+            font=("Arial", 14, "bold")   
+        )
         fullname_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
         #Create fullname entry
-        self.fullname_entry = ctk.CTkEntry(register_frame, placeholder_text="Enter Fullname")
+        self.fullname_entry = ctk.CTkEntry(
+            register_frame,
+            placeholder_text="Enter Fullname",  
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.fullname_entry.grid(row=3, column=1, columnspan=2, pady=12, padx=10)
 
         #Create password label
-        password_label = ctk.CTkLabel(register_frame, text="Password:", anchor="w")
+        # password_label = ctk.CTkLabel(register_frame, text="Password:", anchor="w")
+        password_label = ctk.CTkLabel(
+            register_frame,
+            text="Password:",
+            anchor="w",                 
+            text_color="#333333",        
+            font=("Arial", 14, "bold")   
+        )
         password_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         #Create password entry
-        self.password_entry = ctk.CTkEntry(register_frame, placeholder_text="Enter Password", show="*")
+        self.password_entry = ctk.CTkEntry(
+            register_frame,
+            placeholder_text="Enter Password", show="*",
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.password_entry.grid(row=5, column=1, columnspan=2, pady=12, padx=10)
 
         #Create confirm password label
-        confirm_password_label = ctk.CTkLabel(register_frame, text="Confirm Password:",anchor="w")
+        # confirm_password_label = ctk.CTkLabel(register_frame, text="Confirm Password:",anchor="w")
+        confirm_password_label = ctk.CTkLabel(
+            register_frame,
+            text="Confirm Password:",
+            anchor="w",                 
+            text_color="#333333",        
+            font=("Arial", 14, "bold")   
+        )
         confirm_password_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
         # Create confirm password entry
-        self.confirm_password_entry = ctk.CTkEntry(register_frame, placeholder_text="Confirm Password", show="*")
+        self.confirm_password_entry = ctk.CTkEntry(
+            register_frame,
+            placeholder_text="Confirm Password", show="*",
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.confirm_password_entry.grid(row=6, column=1, columnspan=2, pady=12, padx=10)
 
         # Create sign up button
@@ -168,7 +253,7 @@ class RegisterGUI:
         #create OTP window
         OTP_window = ctk.CTkToplevel(self.root)
         OTP_window.title("Student Management System - OTP Verification")
-        OTP_window.geometry("500x150")
+        OTP_window.geometry("500x170")
         # Set appearance mode and default theme
         ctk.set_appearance_mode("light") #Change to white mode
         ctk.set_default_color_theme("blue")
@@ -181,7 +266,17 @@ class RegisterGUI:
         title_lbl.pack(pady = 15)
 
         #####   Entry for OTP  ######
-        otp_entry = ctk.CTkEntry(OTP_window)
+        otp_entry = ctk.CTkEntry(
+            OTP_window,
+            placeholder_text="Your OTP codes",  
+            width=200,                    
+            height=35,                    
+            border_width=1,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         otp_entry.pack(pady = 10)
         
         # Function to get OTP and verify it

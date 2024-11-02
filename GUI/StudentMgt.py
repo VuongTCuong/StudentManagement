@@ -4,7 +4,9 @@ from BUS import classBUS,studentBUS
 from DTO import studentDTO
 class StudentMgt:
     def __init__(self):
-        self.root = ctk.CTk()  
+        self.root = ctk.CTk()
+        self.root.title("Student Management System - Student Management") 
+         
         
     def create_interactframe(self,frame):
         #student form   

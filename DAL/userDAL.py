@@ -7,6 +7,7 @@ class userDAL:
         try:
             self.conn = sqlite3.connect(path)
             self.cursor = self.conn.cursor()
+            print('Connected Database Successfully.')
         except sqlite3.Error as e:
             print(f"Error: Can not connect to database {e}")
 
@@ -22,7 +23,7 @@ class userDAL:
                     email TEXT NOT NULL UNIQUE
                 )
             ''')
-            print('Created Database.')
+            
         except sqlite3.Error as e:
             print(f"Error: Can not create table {e}")
     
