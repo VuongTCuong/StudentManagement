@@ -89,7 +89,6 @@ class LoginGUI:
             placeholder_text_color="#888888" # Placeholder text color
         )
         self.username_entry.grid(row = 1, column = 1, padx = 10, pady = 5)
-
         #password label
         # pwd_label = ctk.CTkLabel(loginbox_frame, text="Password:")
         pwd_label = ctk.CTkLabel(

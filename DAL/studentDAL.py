@@ -7,6 +7,7 @@ class studentDAL:
             self.cursor = self.conn.cursor()
         except sqlite3.Error as e:
             print(f"Error: Can not connect to database {e}")
+
     def create_student_table(self): 
         try:      
             self.cursor.execute('''
@@ -34,8 +35,53 @@ class studentDAL:
             return True
         except sqlite3.Error as e:
             print(e)
-            
         return False
+
+    def get_all_student(self):
+        try:
+            self.cursor.execute('select * from Sinhvien')
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(e)
+        return self.cursor.fetchall()
+
+    def is_exist_student(self,masv):
+        try:
+            self.cursor.execute('select * from SinhVien where masv='+masv)
+            self.conn.commit()
+            if self.cursor.fetchone()!=None:
+                return True
+        except sqlite3.Error as e:
+            print(e)
+        return False
+    def update_student(self,masv,tensv,namsinh,gioitinh,email,malop):
+        if self.is_exist_student(masv):
+            if self.cursor.fetchone()!=None:
+                try:
+                    self.cursor.execute('''
+                        UPDATE SinhVien 
+                        SET tensv = ?, namsinh = ?, gioitinh = ?, email = ?, malop = ?
+                        WHERE masv = ?
+                    ''', (tensv, namsinh, gioitinh, email, malop, masv))
+                    self.conn.commit()
+                    return True
+                except sqlite3.Error as e:
+                    print(e)
+        return False
+
+    def delete_student(self,masv):
+        if self.is_exist_student(masv):
+            try:
+                self.cursor.execute('''
+                    DELETE FROM SinhVien
+                    WHERE masv = ?
+                ''', (masv,))
+                self.conn.commit()
+                return True
+            except sqlite3.Error as e:
+                print(e)
+        return False
+    
     def close(self):
         try: 
             self.conn.close()

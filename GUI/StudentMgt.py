@@ -6,7 +6,7 @@ class StudentMgt:
     def __init__(self):
         self.root = ctk.CTk()
         self.root.title("Student Management System - Student Management") 
-         
+        self.studentBUS = studentBUS.studentBUS()
         
     def create_interactframe(self,frame):
         #student form   
@@ -48,20 +48,20 @@ class StudentMgt:
         #button 
         add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_student)
         add_button.place(x=10,y=280)
-        reset_button = ctk.CTkButton(frame,text='Reset',width=90)
+        reset_button = ctk.CTkButton(frame,text='Reset',width=90,command=self.clear_input)
         reset_button.place(x=105,y=280)
-        update_button = ctk.CTkButton(frame,text='Cập nhật',width=90)
+        update_button = ctk.CTkButton(frame,text='Cập nhật',width=90,command=self.update_student)
         update_button.place(x=200,y=280)
-        delete_button = ctk.CTkButton(frame,text='Xoá',width=90)
+        delete_button = ctk.CTkButton(frame,text='Xoá',width=90,command=self.delete_student)
         delete_button.place(x=295,y=280)
 
     def create_tableframe(self,frame):
         #student table
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập MSSV hoặc tên để tìm kiếm')
-        search_entry.place(x=100,y=10)
-        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm')
+        self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập MSSV hoặc tên để tìm kiếm')
+        self.search_entry.place(x=100,y=10)
+        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_IDorName)
         search_button.place(x=350,y=10)
 
         self.table = ttk.Treeview(frame,height=23)
@@ -82,10 +82,22 @@ class StudentMgt:
         self.table.column('Email', width=150)
         self.table.column('Mã Lớp', width=100)
         self.table.place(x=10,y=50)
-    
+        self.table.bind('<Button-1>',self.write_all_input)
+
+        self.get_student_to_table()
+
+    def is_valid_input(self):
+        masv = self.msv_entry.get()
+        hoten = self.hoten_entry.get()
+        namsinh = self.namsinh_entry.get()
+        gioitinh = self.gioitinh_cb.get()
+        email = self.email_entry.get()
+        malop = self.malop_cb.get()
+        if masv=='' or hoten =='' or namsinh=='' or gioitinh=='' or email=='' or malop=='':
+            return False
+        return True
+
     def add_student(self):
-        #valid_flag = 1 : hợp lệ; valid_flag=0: không hợp lệ
-        valid_flag = 1
         masv = self.msv_entry.get()
         hoten = self.hoten_entry.get()
         namsinh = self.namsinh_entry.get()
@@ -93,17 +105,82 @@ class StudentMgt:
         email = self.email_entry.get()
         malop = self.malop_cb.get()
 
-        if masv=='' or hoten =='' or namsinh=='' or gioitinh=='' or email=='' or malop=='':
-            valid_flag = 0
-
-        if valid_flag!=0:
-            student = studentBUS.studentBUS()
+        #thêm vào bảng cũng như database
+        if self.is_valid_input():
             student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,malop)
-            if(student.add_student(student_obj)):
+            if(self.studentBUS.add_student(student_obj)):
+                self.clear_input()
+                self.get_student_to_table()
                 messagebox.showinfo('Success','Added Successfuly')
             
-            self.get_student_to_table()
         else: messagebox.showerror('Error','Invalid input!')
 
+    def update_student(self):
+        masv = self.msv_entry.get()
+        hoten = self.hoten_entry.get()
+        namsinh = self.namsinh_entry.get()
+        gioitinh = self.gioitinh_cb.get()
+        email = self.email_entry.get()
+        malop = self.malop_cb.get()
+        if self.is_valid_input():
+            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,malop)
+            if(self.studentBUS.update_student(student_obj)):
+                self.clear_input()
+                self.get_student_to_table()
+                messagebox.showinfo('Success','Updated Successfuly')
+            else: messagebox.showerror('Error','Không tồn tại mã sinh viên')
+        else: messagebox.showerror('Error','Invalid input!')
+
+    def delete_student(self):
+        masv = self.msv_entry.get()
+        if(self.studentBUS.delete_student(masv)):
+                self.clear_input()
+                self.get_student_to_table()
+                messagebox.showinfo('Success','Deleted Successfuly')
+            
+        else: messagebox.showerror('Error','Invalid Deletion')
+
+    def search_by_IDorName(self):
+        search_text = self.search_entry.get()
+        self.table.delete(*self.table.get_children())
+        result = self.studentBUS.get_all_student()
+        for i in result:
+            if search_text.lower() in str(i[0]) or search_text.lower() in i[1].lower():
+                self.table.insert('','end',values=i)
+        
+
     def get_student_to_table(self):
-        pass
+        self.table.delete(*self.table.get_children())
+        result = self.studentBUS.get_all_student()
+        for i in result:
+            self.table.insert('','end',value=i)
+
+    def write_all_input(self,event): #tham chiếu biến event bắt buộc khi muốn dùng hàm bind
+        
+        #lấy item dựa vào ví trí click
+        clicked_item = self.table.identify('item',event.x,event.y)
+        #get data of clicked row
+        clicked_data = self.table.item(clicked_item)['values']
+        
+        
+        if clicked_item!='':
+            #clear trước khi bỏ dòng vừa nhập vào
+            self.clear_input()
+            self.msv_entry.insert(0, clicked_data[0])
+            self.hoten_entry.insert(0, clicked_data[1]) 
+            self.namsinh_entry.insert(0, clicked_data[2])
+            self.gioitinh_cb.set(clicked_data[3])
+            self.email_entry.insert(0, clicked_data[4])
+            self.malop_cb.set(clicked_data[5])
+
+            self.msv_entry.configure(state='disabled',fg_color='#cfe2f3')
+
+    def clear_input(self):
+        if(self.msv_entry._state=='disabled'):
+            self.msv_entry.configure(state='normal',fg_color='white')
+        self.msv_entry.delete(0, 'end')
+        self.hoten_entry.delete(0, 'end')
+        self.namsinh_entry.delete(0, 'end')
+        self.gioitinh_cb.set('')
+        self.email_entry.delete(0, 'end')
+        self.malop_cb.set('')
