@@ -10,12 +10,34 @@ class ClassMgt:
         #student form   
         malop_lab = ctk.CTkLabel(frame,text="Mã Lớp:")
         malop_lab.place(x=10,y=10)
-        malop_entry = ctk.CTkEntry(frame,width=230)
+        # malop_entry = ctk.CTkEntry(frame,width=230)
+        malop_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập mã lớp",  
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         malop_entry.place(x=100,y=10)
 
         tenlop_lab = ctk.CTkLabel(frame,text="Tên Lớp:")
         tenlop_lab.place(x=10,y=50)
-        tenlop_entry = ctk.CTkEntry(frame,width=230)
+        # tenlop_entry = ctk.CTkEntry(frame,width=230)
+        tenlop_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập tên lớp",  
+            width=200,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         tenlop_entry.place(x=100,y=50)
 
         khoa_lab = ctk.CTkLabel(frame,text="Mã Khoa:")
@@ -23,7 +45,7 @@ class ClassMgt:
         khoa_entry = ctk.CTkComboBox(frame,width=230,state='readonly')
         khoa_entry.place(x=100,y=90)
 
-        #button 
+        #buttons
         add_button = ctk.CTkButton(frame,text='Thêm',width=90)
         add_button.place(x=10,y=140)
         reset_button = ctk.CTkButton(frame,text='Reset',width=90)
@@ -38,7 +60,18 @@ class ClassMgt:
         #student table
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã lớp để tìm kiếm')
+        # search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã lớp để tìm kiếm')
+        search_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập mã lớp để tìm kiếm",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         search_entry.place(x=100,y=10)
         search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm')
         search_button.place(x=350,y=10)
