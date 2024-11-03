@@ -12,17 +12,50 @@ class StudentMgt:
         #student form   
         msv_lab = ctk.CTkLabel(frame,text="Mã SV:")
         msv_lab.place(x=10,y=10)
-        self.msv_entry = ctk.CTkEntry(frame,width=230)
+        # self.msv_entry = ctk.CTkEntry(frame,width=230)
+        self.msv_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập MSSV",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.msv_entry.place(x=100,y=10)
 
         hoten_lab = ctk.CTkLabel(frame,text="Họ Tên:")
         hoten_lab.place(x=10,y=50)
-        self.hoten_entry = ctk.CTkEntry(frame,width=230)
+        # self.hoten_entry = ctk.CTkEntry(frame,width=230)
+        self.hoten_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập Họ Tên",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.hoten_entry.place(x=100,y=50)
 
         namsinh_lab = ctk.CTkLabel(frame,text="Năm Sinh:")
         namsinh_lab.place(x=10,y=90)
-        self.namsinh_entry = ctk.CTkEntry(frame,width=230)
+        # self.namsinh_entry = ctk.CTkEntry(frame,width=230)
+        self.namsinh_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập Năm Sinh",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.namsinh_entry.place(x=100,y=90)
 
         gioitinh_lab = ctk.CTkLabel(frame,text="Giới Tính:")
@@ -32,7 +65,18 @@ class StudentMgt:
 
         email_lab = ctk.CTkLabel(frame,text="Email:")
         email_lab.place(x=10,y=170)
-        self.email_entry = ctk.CTkEntry(frame,width=230)
+        # self.email_entry = ctk.CTkEntry(frame,width=230)
+        self.email_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập Email",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.email_entry.place(x=100,y=170)
 
         malop_lab = ctk.CTkLabel(frame,text="Mã Lớp:")
@@ -59,7 +103,18 @@ class StudentMgt:
         #student table
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập MSSV hoặc tên để tìm kiếm')
+        # self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập MSSV hoặc tên để tìm kiếm')
+        self.search_entry  = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập MSSV hoặc tên để tìm kiếm",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.search_entry.place(x=100,y=10)
         search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_IDorName)
         search_button.place(x=350,y=10)
