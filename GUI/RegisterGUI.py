@@ -287,7 +287,7 @@ class RegisterGUI:
                 if otp_code.isdigit() and int(otp_code) == self.OTP:
                     #Create account
                     user = userDTO.userDTO(username, password)
-                    self.userBUS.register(user, email, fullname, username)
+                    self.userBUS.register(user, email, fullname)
                     messagebox.showinfo("Success", "Account is created.")
                     OTP_window.destroy()
                     self.root.destroy()
@@ -300,11 +300,13 @@ class RegisterGUI:
         submit_button.pack(pady = 10)
 
     def on_exit(self):
-        # Ask for confirmation
-        result = messagebox.askyesno("Confirmation", "Do you want to exit?")
+    # Ask for confirmation
+        result = messagebox.askyesno("Confirmation", "Bạn có muốn thoát không?")
         if result:
-            # Save data and exit
+            # Destroy the root window
             self.root.destroy()
+            # Terminate the program
+            sys.exit()
 
 
 
