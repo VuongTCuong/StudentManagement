@@ -79,6 +79,14 @@ class userDAL:
         except sqlite3.Error as e:
             print(f"Error can not check email information: {e}")
 
+    def update_pwd(self, email, new_pwd):
+        try:
+            self.cursor.execute(''' UPDATE users SET password = ? WHERE email = ?''', (new_pwd, email))
+            self.conn.commit()
+            return self.cursor.rowcount > 0 #return True if update successfully
+        except sqlite3.Error as e:
+            print(f"Error, can not change pwd {e}")
+
     #close connection
     def close(self):
         try: 
