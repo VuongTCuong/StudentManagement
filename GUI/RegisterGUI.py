@@ -24,6 +24,7 @@ class RegisterGUI:
         self.root = ctk.CTk()
         self.root.title("Student Management System - Register")
         self.root.geometry("460x480")
+        self.root.resizable(False, False)
 
         # Set appearance mode and default theme
         ctk.set_appearance_mode("light") #Change to white mode
@@ -175,11 +176,11 @@ class RegisterGUI:
 
         # Create sign up button
         self.signup_button = ctk.CTkButton(register_frame, text="Register", command=self.on_register)
-        self.signup_button.grid(row=7, column=0, columnspan=3, pady=12, padx=10, sticky="ew")
+        self.signup_button.grid(row=7, column=0, columnspan=1, pady=12, padx=10, sticky="w")
 
         # Create Exit button
         self.exit_button = ctk.CTkButton(register_frame, text="Exit", command=self.on_exit)
-        self.exit_button.grid(row=8, column=0, columnspan=3, pady=12, padx=10, sticky="ew")
+        self.exit_button.grid(row=7, column=1, columnspan=1, pady=12, padx=10, sticky="e")
 
     def email_is_valid(self, email):
         # Define the regular expression for validating an email
@@ -217,6 +218,7 @@ class RegisterGUI:
 
                         #send OTP via email
                         if self.send_otp_codes(email):
+                            messagebox.showinfo("Success", "OTPs have been sent to your email.")
                             self.create_otp_window(email, fullname, username, password) #if sent, create otp input window.
                         else:
                             messagebox.showerror("Error", "Cannot send OTP via Email.")
@@ -301,12 +303,12 @@ class RegisterGUI:
 
     def on_exit(self):
     # Ask for confirmation
-        result = messagebox.askyesno("Confirmation", "Bạn có muốn thoát không?")
+        result = messagebox.askyesno("Confirmation", "Exit Register?")
         if result:
             # Destroy the root window
             self.root.destroy()
-            # Terminate the program
-            sys.exit()
+            # # Terminate the program
+            # sys.exit()
 
 
 
