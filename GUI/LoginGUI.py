@@ -15,6 +15,7 @@ from BUS import userBUS
 #import GUIs
 import RegisterGUI
 import Changetab
+import Forgort_pwdGUI
 
 class LoginGUI:
     def __init__(self):
@@ -24,6 +25,7 @@ class LoginGUI:
         self.root = ctk.CTk()
         self.root.title("Student Management System - Login")
         self.root.geometry("540x270")
+        self.root.resizable(False, False)
 
         # Set appearance mode and default theme
         ctk.set_appearance_mode("light")
@@ -149,7 +151,7 @@ class LoginGUI:
         RegisterGUI.RegisterGUI()
 
     def on_forgot(self ):
-        pass
+        Forgort_pwdGUI.Forgot_pwdGUI()
 
 if __name__ == "__main__":
     LoginGUI()
