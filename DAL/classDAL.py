@@ -25,8 +25,8 @@ class classDAL:
     def add_class(self, malop, tenlop, makhoa):
         try:
              self.cursor.execute('''
-                                 INSERT INTO Lop (malop,telop,makhoa)
-                                 VALUES (?, ?, ?, ?)
+                                 INSERT INTO Lop (malop,tenlop,makhoa)
+                                 VALUES (?, ?, ?)
                                  ''', (malop, tenlop, makhoa))
              self.conn.commit()
         except sqlite3.IntegrityError as e:
@@ -45,9 +45,56 @@ class classDAL:
             print(f"Error: {e}")
         result = self.cursor.fetchall()
         return result
+    
     def close(self):
         try: 
             self.conn.close()
         except sqlite3.Error as e:
             print(f"Error disconnecting database {e}")
+    
+    def update_class(self, malop, tenlop, makhoa):
+        try:
+            self.cursor.execute('''
+                UPDATE Lop 
+                SET tenlop = ?, makhoa = ?
+                WHERE malop = ?
+            ''', (tenlop, makhoa, malop))
+            self.conn.commit()
+        except sqlite3.IntegrityError as e:
+            print(f"Error: Class name already exists.")
+            return False
+        except sqlite3.Error as e:
+            print(f"Error: Cannot update class - {e}")
+            return False
+        return True
+    
+    def delete_class(self, malop):
+        try:
+            self.cursor.execute('''
+                DELETE FROM Lop
+                WHERE malop = ?
+            ''', (malop,))
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"Error: Cannot delete class - {e}")
+            return False
+        return True
+    
+    def is_exist_class(self, malop):
+        try:
+            self.cursor.execute('SELECT * FROM Lop WHERE malop = ?', (malop,))
+            self.conn.commit()
+            if self.cursor.fetchone() is not None:
+                return True
+        except sqlite3.Error as e:
+            print(f"Error: {e}")
+        return False
+    
+    def get_class_by_id(self, malop):
+        try:
+            self.cursor.execute('SELECT * FROM Lop WHERE malop = ?', (malop,))
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"Error: {e}")
+        return self.cursor.fetchone()
 

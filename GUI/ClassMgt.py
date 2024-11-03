@@ -1,91 +1,204 @@
 import customtkinter as ctk
-from tkinter import ttk
+from tkinter import ttk, messagebox
+from BUS import departmentBUS, classBUS
+from DTO import classDTO
 
 class ClassMgt:
     def __init__(self):
         self.root = ctk.CTk()
-     
+        self.classBUS = classBUS.classBUS()
+
         
     def create_interactframe(self,frame):
-        #student form   
+        #class form   
         malop_lab = ctk.CTkLabel(frame,text="Mã Lớp:")
         malop_lab.place(x=10,y=10)
-        # malop_entry = ctk.CTkEntry(frame,width=230)
-        malop_entry = ctk.CTkEntry(
-            frame,
-            placeholder_text="Nhập mã lớp",  
-            width=200,                    
-            height=35,                    
-            border_width=0,               
-            corner_radius=10,             
-            fg_color="#f2f2f2",           
-            text_color="#333333",         
-            placeholder_text_color="#888888" 
-        )
-        malop_entry.place(x=100,y=10)
+        self.malop_entry = ctk.CTkEntry(frame,width=230)
+        self.malop_entry.place(x=100,y=10)
 
         tenlop_lab = ctk.CTkLabel(frame,text="Tên Lớp:")
         tenlop_lab.place(x=10,y=50)
-        # tenlop_entry = ctk.CTkEntry(frame,width=230)
-        tenlop_entry = ctk.CTkEntry(
-            frame,
-            placeholder_text="Nhập tên lớp",  
-            width=200,                    
-            height=35,                    
-            border_width=0,               
-            corner_radius=10,             
-            fg_color="#f2f2f2",           
-            text_color="#333333",         
-            placeholder_text_color="#888888" 
-        )
-        tenlop_entry.place(x=100,y=50)
+        self.tenlop_entry = ctk.CTkEntry(frame,width=230)
+        self.tenlop_entry.place(x=100,y=50)
 
         khoa_lab = ctk.CTkLabel(frame,text="Mã Khoa:")
         khoa_lab.place(x=10,y=90)
-        khoa_entry = ctk.CTkComboBox(frame,width=230,state='readonly')
-        khoa_entry.place(x=100,y=90)
 
-        #buttons
-        add_button = ctk.CTkButton(frame,text='Thêm',width=90)
-        add_button.place(x=10,y=140)
-        reset_button = ctk.CTkButton(frame,text='Reset',width=90)
-        reset_button.place(x=105,y=140)
-        update_button = ctk.CTkButton(frame,text='Cập nhật',width=90)
-        update_button.place(x=200,y=140)
-        delete_button = ctk.CTkButton(frame,text='Xoá',width=90)
-        delete_button.place(x=295,y=140)
+        #name of department base on department id
+        tenkhoa_lab = ctk.CTkLabel(frame,text="Tên Khoa:")
+        tenkhoa_lab.place(x=10,y=130)
+        self.tenkhoa_entry = ctk.CTkEntry(frame,width=230)
+        self.tenkhoa_entry.place(x=100,y=130)
+        #self.tenkhoa_entry.configure(state='disabled',fg_color='lightgray')
+
+        #get all department
+        department_BUS = departmentBUS.departmentBUS()
+        all_department = department_BUS.get_all_department()
+        makhoa = [str(makhoa[0]) for makhoa in all_department] 
+        self.khoa_cb = ctk.CTkComboBox(frame,width=230,values=makhoa,state='readonly',command=self.on_department_select)
+        self.khoa_cb.place(x=100,y=90)
+
+        #button 
+        add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_class)
+        add_button.place(x=10,y=170)
+        reset_button = ctk.CTkButton(frame,text='Reset',width=90,command=self.clear_input)
+        reset_button.place(x=105,y=170)
+        update_button = ctk.CTkButton(frame,text='Cập nhật',width=90,command=self.update_class)
+        update_button.place(x=200,y=170)
+        delete_button = ctk.CTkButton(frame,text='Xoá',width=90,command=self.delete_class)
+        delete_button.place(x=295,y=170)
 
 
     def create_tableframe(self,frame):
-        #student table
+        #class table
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        # search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã lớp để tìm kiếm')
-        search_entry = ctk.CTkEntry(
-            frame,
-            placeholder_text="Nhập mã lớp để tìm kiếm",  
-            width=230,                    
-            height=35,                    
-            border_width=0,               
-            corner_radius=10,             
-            fg_color="#f2f2f2",           
-            text_color="#333333",         
-            placeholder_text_color="#888888" 
-        )
-        search_entry.place(x=100,y=10)
-        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm')
+        self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã lớp để tìm kiếm')
+        self.search_entry.place(x=100,y=10)
+        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_ID)
         search_button.place(x=350,y=10)
 
-        table = ttk.Treeview(frame,height=23)
-        table['columns'] = ('Mã Lớp', 'Tên Lớp', 'Mã Khoa')
-        table.heading('Mã Lớp', text='Mã Lớp')
-        table.heading('Tên Lớp', text='Tên Lớp')
-        table.heading('Mã Khoa', text='Mã Khoa')
+        self.table = ttk.Treeview(frame,height=23)
+        self.table['columns'] = ('Mã Lớp', 'Tên Lớp', 'Mã Khoa')
+        self.table.heading('Mã Lớp', text='Mã Lớp')
+        self.table.heading('Tên Lớp', text='Tên Lớp')
+        self.table.heading('Mã Khoa', text='Mã Khoa')
 
         # Adjust column widths to fit within table_frame
-        table.column("#0", width=0, stretch=ctk.NO)
-        table.column('Mã Lớp', width=200)
-        table.column('Tên Lớp', width=300)
-        table.column('Mã Khoa', width=200)
-        table.place(x=10,y=50)
+        self.table.column("#0", width=0, stretch=ctk.NO)
+        self.table.column('Mã Lớp', width=200)
+        self.table.column('Tên Lớp', width=300)
+        self.table.column('Mã Khoa', width=200)
+        self.table.place(x=10,y=50)
+        self.table.bind('<Button-1>',self.write_all_input)
+
+        self.get_class_to_table()
+    
+    # check input
+    def is_valid_input(self):
+        malop = self.malop_entry.get()
+        tenlop = self.tenlop_entry.get() 
+        makhoa = self.khoa_cb.get()
+
+            
+        if malop == '' or tenlop == '' or makhoa == '':
+            return False
+        return True   
+        
+    # check input and add class to database
+    def add_class(self):
+        malop = self.malop_entry.get()
+        tenlop = self.tenlop_entry.get()
+        makhoa = self.khoa_cb.get()
+
+        if self.is_valid_input():
+            if(self.classBUS.add_class(malop, tenlop, makhoa)):
+                self.clear_input()
+                self.get_class_to_table()
+                messagebox.showinfo('Success','Added Successfully')
+            else:
+                messagebox.showerror('Error','Invalid input!')
+
+    # clear input
+    def clear_input(self):
+        if(self.malop_entry._state=='disabled'):
+            self.malop_entry.configure(state='normal',fg_color='white')
+        self.malop_entry.delete(0, 'end')
+        self.tenlop_entry.delete(0, 'end')
+        self.khoa_cb.set('')
+        self.tenkhoa_entry.configure(state='normal')
+        self.tenkhoa_entry.delete(0, 'end')
+        self.tenkhoa_entry.configure(state='disabled')
+
+
+    # update class
+    def update_class(self):
+        malop = self.malop_entry.get()
+        tenlop = self.tenlop_entry.get()
+        makhoa = self.khoa_cb.get()
+
+        #check if class exists
+        if not self.classBUS.get_class_by_id(malop):
+            messagebox.showerror('Error', 'Class ID does not exist!')
+            return
+
+        if self.is_valid_input():
+            if(self.classBUS.update_class(malop, tenlop, makhoa)):
+                self.clear_input()
+                self.get_class_to_table()
+                messagebox.showinfo('Success','Updated Successfully')
+            else:
+                messagebox.showerror('Error','Failed to update!')
+        else:
+            messagebox.showerror('Error','Invalid input!')
+
+            
+    # delete class
+    def delete_class(self):
+        malop = self.malop_entry.get()
+        if(self.classBUS.delete_class(malop)):
+            self.clear_input()
+            self.get_class_to_table()
+            messagebox.showinfo('Success','Deleted Successfully')
+        else:
+            messagebox.showerror('Error','Invalid Deletion')
+
+ 
+    # get all class to table
+    def get_class_to_table(self):
+        self.table.delete(*self.table.get_children())
+        result = self.classBUS.get_all_class()
+        for i in result:
+            self.table.insert('','end',value=i)
+        
+    def search_by_ID(self):
+        search_text = self.search_entry.get()
+        self.table.delete(*self.table.get_children())
+        result = self.classBUS.get_all_class()
+        for i in result:
+            if search_text.lower() in str(i[0]):
+                self.table.insert('','end',values=i)
+
+    def write_all_input(self,event): #event is required when using bind 
+        
+        #get item based on click position
+        clicked_item = self.table.identify('item',event.x,event.y)
+        #get data of clicked row
+        clicked_data = self.table.item(clicked_item)['values']
+        
+        
+        if clicked_item!='':
+            #clear before insert new data
+            self.clear_input()
+            self.malop_entry.insert(0, clicked_data[0])
+            self.tenlop_entry.insert(0, clicked_data[1])
+            self.khoa_cb.set(clicked_data[2])
+            self.malop_entry.configure(state='disabled',fg_color='lightgray')
+
+            # Get department name based on makhoa
+            department_BUS = departmentBUS.departmentBUS()
+            department = department_BUS.get_department_by_id(clicked_data[2])
+            if department:
+                self.tenkhoa_entry.configure(state='normal')
+                self.tenkhoa_entry.delete(0, 'end')
+                self.tenkhoa_entry.insert(0, department[1])  # Assuming department name is at index 1
+                self.tenkhoa_entry.configure(state='disabled')
+
+    #get department name based on makhoa (combobox)
+    def on_department_select(self, selected_makhoa):
+        department_BUS = departmentBUS.departmentBUS()
+        department = department_BUS.get_department_by_id(selected_makhoa)
+        if department:
+            self.tenkhoa_entry.configure(state='normal')
+            self.tenkhoa_entry.delete(0, 'end')
+            self.tenkhoa_entry.insert(0, department[1])
+            self.tenkhoa_entry.configure(state='disabled')
+        
+            
+
+
+
+
+        
+
   
