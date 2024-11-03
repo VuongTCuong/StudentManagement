@@ -2,6 +2,9 @@ import customtkinter as ctk
 import StudentMgt
 import ClassMgt
 import DepartmentMgt
+import sys
+from tkinter import messagebox
+
 class Changetab:
     def __init__(self):
         self.root = ctk.CTk()
@@ -50,7 +53,18 @@ class Changetab:
         khoa_tab_button.place(x=175, y=y_center)
 
         #need EXIT button
+        exit_button = ctk.CTkButton(self.top_frame, text='Thoát',width=80,command=self.on_exit)
+        exit_button.place(x=1250, y=y_center)
 
+    def on_exit(self):
+    # Ask for confirmation
+        result = messagebox.askyesno("Confirmation", "Bạn có muốn thoát không?")
+        if result:
+            # Destroy the root window
+            self.root.destroy()
+            # Terminate the program
+            sys.exit()
+            
     def left_frame(self):
         self.left_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width/3)
         self.left_frame.pack(side='left',padx=20)
