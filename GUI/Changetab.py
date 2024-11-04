@@ -4,7 +4,7 @@ import ClassMgt
 import DepartmentMgt
 import sys
 from tkinter import messagebox
-
+import LoginGUI
 class Changetab:
     def __init__(self):
         self.root = ctk.CTk()
@@ -52,10 +52,18 @@ class Changetab:
         khoa_tab_button = ctk.CTkButton(self.top_frame, text='Khoa',width=80,command=self.changeto_department_tab)
         khoa_tab_button.place(x=175, y=y_center)
 
+        #logout
+        logout_button = ctk.CTkButton(self.top_frame, text='Đăng xuất',width=80,command=self.logout)
+        logout_button.place(x=1180,y=y_center)
         #need EXIT button
         exit_button = ctk.CTkButton(self.top_frame, text='Thoát',width=80,command=self.on_exit)
-        exit_button.place(x=1250, y=y_center)
+        exit_button.place(x=1270, y=y_center)
 
+    def logout(self):
+        result = messagebox.askyesno("Confirmation", "Bạn có muốn đăng xuất không?")
+        if result:
+            self.root.destroy()
+            LoginGUI.LoginGUI()
     def on_exit(self):
     # Ask for confirmation
         result = messagebox.askyesno("Confirmation", "Bạn có muốn thoát không?")

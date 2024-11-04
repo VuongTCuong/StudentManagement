@@ -14,7 +14,7 @@ class classDAL:
                 create table if not exists Lop(
                     malop INTEGER PRIMARY KEY,
                     tenlop TEXT UNIQUE,
-                    makhoa INTEGER,
+                    makhoa TEXT,
                     FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
                 );
             ''')
@@ -69,16 +69,18 @@ class classDAL:
         return True
     
     def delete_class(self, malop):
-        try:
-            self.cursor.execute('''
-                DELETE FROM Lop
-                WHERE malop = ?
-            ''', (malop,))
-            self.conn.commit()
-        except sqlite3.Error as e:
-            print(f"Error: Cannot delete class - {e}")
-            return False
-        return True
+        if self.is_exist_class(malop):
+            try:
+                self.cursor.execute('''
+                    DELETE FROM Lop
+                    WHERE malop = ?
+                ''', (malop,))
+                self.conn.commit()
+                return True
+            except sqlite3.Error as e:
+                print(f"Error: Cannot delete class - {e}")
+                return False
+        return False
     
     def is_exist_class(self, malop):
         try:

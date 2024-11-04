@@ -38,9 +38,10 @@ class DepartmentMgt:
         search_lab.place(x=10,y=10)
         self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
         self.search_entry.place(x=100,y=10)
-        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm')
+        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_ID)
         search_button.place(x=350,y=10)
-
+        reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_department_to_table)
+        reset_button.place(x=460,y=10)
         self.table = ttk.Treeview(frame,height=23)
         self.table['columns'] = ('Mã Khoa', 'Tên Khoa')
         self.table.heading('Mã Khoa', text='Mã Khoa')
@@ -56,24 +57,29 @@ class DepartmentMgt:
         self.get_department_to_table()
     
     def add_department(self):
-        if self.is_valid_input():
+        is_valid,message = self.is_valid_input()
+        if is_valid:
             makhoa = self.makhoa_entry.get()
             tenkhoa = self.tenkhoa_entry.get()
             
             if self.departmentBUS.add_department(makhoa, tenkhoa):
-                messagebox.showinfo("Success", "Added Successfully!")
+                messagebox.showinfo("Success", "Thêm"+message)
                 self.clear_input()
                 self.table.delete(*self.table.get_children())
                 self.get_department_to_table()
             else:
-                messagebox.showerror("Error", "Department ID already exists!")
-    
+                messagebox.showerror("Error", "Mã khoa đã tồn tại")
+        else: messagebox.showerror("Error",message)
     def is_valid_input(self):
         makhoa = self.makhoa_entry.get()
         tenkhoa = self.tenkhoa_entry.get()
         if makhoa == '' or tenkhoa == '':
-            return False
-        return True
+            return False,"Vui lòng nhập đầy đủ thông tin"
+        if any(char.isdigit() for char in makhoa):
+            return False,"Mã khoa chỉ nhập chữ"
+        if any(char.isdigit() for char in tenkhoa):
+            return False,"Tên khoa chỉ nhập chữ"
+        return True,' thành công'
     
     def clear_input(self):
         if(self.makhoa_entry._state=='disabled'):
@@ -82,6 +88,7 @@ class DepartmentMgt:
         self.tenkhoa_entry.delete(0, ctk.END)
 
     def get_department_to_table(self):
+        self.table.delete(*self.table.get_children())
         all_department = self.departmentBUS.get_all_department()
         for department in all_department:
             self.table.insert('', ctk.END, values=department)  
@@ -89,36 +96,40 @@ class DepartmentMgt:
     def search_by_ID(self):
         search_ID = self.search_entry.get()
         self.table.delete(*self.table.get_children())
-        self.get_department_to_table(search_ID)
-    
+        result = self.departmentBUS.get_all_department()
+        for i in result:
+            if search_ID.lower() in str(i[0]):
+                self.table.insert('','end',values=i)
+
     def update_department(self):
         makhoa = self.makhoa_entry.get()
         tenkhoa = self.tenkhoa_entry.get()
 
-        if self.is_valid_input():
+        is_valid,message = self.is_valid_input()
+        if is_valid:
         # Remove the extra check since the ID will exist if it's selected from table
             if self.departmentBUS.update_department(makhoa, tenkhoa):
-                messagebox.showinfo('Success','Updated Successfully')
+                messagebox.showinfo('Success','Cập nhật'+message)
                 self.clear_input()
                 self.table.delete(*self.table.get_children())  # Clear table
                 self.get_department_to_table()  # Refresh table
             else:
-                messagebox.showerror('Error','Failed to update!')
+                messagebox.showerror('Error','Không tồn tại mã khoa')
         else:
-            messagebox.showerror('Error','Invalid input!')
+            messagebox.showerror('Error',message)
 
     def delete_department(self):
         makhoa = self.makhoa_entry.get()
         if makhoa:  # Check if ID exists
             if self.departmentBUS.delete_department(makhoa):
-                messagebox.showinfo('Success','Deleted Successfully')
+                messagebox.showinfo('Success','Xoá thành công')
                 self.clear_input()
                 self.table.delete(*self.table.get_children())  # Clear table
                 self.get_department_to_table()  # Refresh table
             else:
-                messagebox.showerror('Error','Failed to delete. Department may be referenced in other tables.')
+                messagebox.showerror('Error','Không tồn tại mã khoa')
         else:
-            messagebox.showerror('Error','Please select a department to delete')
+            messagebox.showerror('Error','Chọn mã khoa để xoá')
 
     def write_all_input(self, event):
         # Get item based on click position

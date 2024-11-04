@@ -29,7 +29,7 @@ class departmentBUS:
                 return False
             
             # If not in use, proceed with deletion
-            result = self.departmentDAO.delete_department(makhoa)
+            result = self.departmentDAL.delete_department(makhoa)
             return result
         except Exception as e:
             print(f"Error in DepartmentBUS - delete_department: {str(e)}")

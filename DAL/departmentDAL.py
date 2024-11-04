@@ -12,7 +12,7 @@ class departmentDAL:
         try:      
             self.cursor.execute('''
                 create table if not exists Khoa(
-                    makhoa INTEGER PRIMARY KEY,
+                    makhoa TEXT PRIMARY KEY,
                     tenkhoa TEXT UNIQUE
                 )                                 
             ''')
@@ -49,40 +49,41 @@ class departmentDAL:
             cursor = self.conn.cursor()
             
             sql = """
-                UPDATE Department 
-                SET TenKhoa = %s 
-                WHERE MaKhoa = %s
+                UPDATE Khoa 
+                SET TenKhoa = ?
+                WHERE MaKhoa = ?
             """
             cursor.execute(sql, (department.tenkhoa, department.makhoa))
             self.conn.commit()
             
             return cursor.rowcount > 0
         except Exception as e:
-            print(f"Error in DepartmentDAO - update_department: {str(e)}")
+            print(f"Error in DepartmentDAL - update_department: {str(e)}")
             return False
         finally:
             cursor.close()
     
     def delete_department(self, makhoa):
-        try:
-            cursor = self.conn.cursor()
-            
-            sql = "DELETE FROM Department WHERE MaKhoa = %s"
-            cursor.execute(sql, (makhoa,))
-            self.conn.commit()
-            
-            return cursor.rowcount > 0
-        except Exception as e:
-            print(f"Error in DepartmentDAO - delete_department: {str(e)}")
-            return False
-        finally:
-            cursor.close()
+        if self.is_exist_department(makhoa):
+            try:
+                cursor = self.conn.cursor()
+                
+                sql = '''DELETE FROM Khoa WHERE makhoa = ?'''
+                cursor.execute(sql, (makhoa,))
+                self.conn.commit()
+                
+                return True
+            except Exception as e:
+                return False
+            finally:
+                cursor.close()
+        return False
     
     def check_department_in_classes(self, makhoa):
         try:
             cursor = self.conn.cursor()
             
-            sql = "SELECT COUNT(*) FROM Class WHERE MaKhoa = %s"
+            sql = "SELECT COUNT(*) FROM Lop WHERE makhoa = ?"
             cursor.execute(sql, (makhoa,))
             count = cursor.fetchone()[0]
             
@@ -97,7 +98,7 @@ class departmentDAL:
         try:
             cursor = self.conn.cursor()
             
-            sql = "SELECT COUNT(*) FROM Student WHERE MaKhoa = %s"
+            sql = "SELECT COUNT(*) FROM Sinhvien WHERE MaKhoa = ?"
             cursor.execute(sql, (makhoa,))
             count = cursor.fetchone()[0]
             
@@ -113,9 +114,11 @@ class departmentDAL:
         try:
             self.cursor.execute('SELECT * FROM Khoa WHERE makhoa = ?', (makhoa,))
             self.conn.commit()
+            if self.cursor.fetchone()!=None:
+                return True
         except sqlite3.Error as e:
             print(f"Error: {e}")
-
+        return False
     def close(self):
         try: 
             self.conn.close()
