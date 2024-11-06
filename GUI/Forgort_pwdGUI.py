@@ -189,7 +189,7 @@ class Forgot_pwdGUI:
         #Create new password entry
         newpwd_entry = ctk.CTkEntry(
             newpwd_window,
-            placeholder_text="Enter Email", show = "*",
+            placeholder_text="Enter Password", show = "*",
             width=200,                    
             height=35,                    
             border_width=0,               
@@ -213,7 +213,7 @@ class Forgot_pwdGUI:
         #Create new conf-password entry
         confpwd_entry = ctk.CTkEntry(
             newpwd_window,
-            placeholder_text="Enter Email",  show = "*",
+            placeholder_text="Confirm Password",  show = "*",
             width=200,                    
             height=35,                    
             border_width=0,               

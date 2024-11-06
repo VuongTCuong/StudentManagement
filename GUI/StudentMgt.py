@@ -1,7 +1,9 @@
 import customtkinter as ctk
 from tkinter import ttk,messagebox
+from datetime import datetime
 from BUS import classBUS,studentBUS
 from DTO import studentDTO
+from RegisterGUI import RegisterGUI
 class StudentMgt:
     def __init__(self):
         self.root = ctk.CTk()
@@ -42,12 +44,12 @@ class StudentMgt:
         )
         self.hoten_entry.place(x=100,y=50)
 
-        namsinh_lab = ctk.CTkLabel(frame,text="Năm Sinh:")
+        namsinh_lab = ctk.CTkLabel(frame,text="Ngày Sinh:")
         namsinh_lab.place(x=10,y=90)
         # self.namsinh_entry = ctk.CTkEntry(frame,width=230)
         self.namsinh_entry = ctk.CTkEntry(
             frame,
-            placeholder_text="Nhập Năm Sinh",  
+            placeholder_text="Nhập Năm Sinh (dd/mm/yy)",  
             width=230,                    
             height=35,                    
             border_width=0,               
@@ -79,14 +81,14 @@ class StudentMgt:
         )
         self.email_entry.place(x=100,y=170)
 
-        malop_lab = ctk.CTkLabel(frame,text="Mã Lớp:")
+        malop_lab = ctk.CTkLabel(frame,text="Lớp:")
         malop_lab.place(x=10,y=210)
 
         #Get all class
         clas_BUS = classBUS.classBUS()
         all_class = clas_BUS.get_all_class()
-        malop = [str(malop[0]) for malop in all_class] 
-        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=malop,state='readonly')
+        tenlop = [str(tenlop[1]) for tenlop in all_class] 
+        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=tenlop,state='readonly')
         self.malop_cb.place(x=100,y=210)
 
         #button 
@@ -118,7 +120,8 @@ class StudentMgt:
         self.search_entry.place(x=100,y=10)
         search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_IDorName)
         search_button.place(x=350,y=10)
-
+        reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_student_to_table)
+        reset_button.place(x=460,y=10)
         self.table = ttk.Treeview(frame,height=23)
         self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email', 'Mã Lớp')
         self.table.heading('Mã SV', text='Mã SV')
@@ -149,8 +152,20 @@ class StudentMgt:
         email = self.email_entry.get()
         malop = self.malop_cb.get()
         if masv=='' or hoten =='' or namsinh=='' or gioitinh=='' or email=='' or malop=='':
-            return False
-        return True
+            return False,"Vui lòng nhập đầy đủ thông tin"
+        if not masv.isdigit():
+            return False, "Mã số sinh viên chỉ nhập số"
+        if any(char.isdigit() for char in hoten):
+            return False, "Tên sinh viên chỉ nhập ký tự"
+        try:
+            dt_start = datetime.strptime(namsinh, '%d/%m/%Y')
+        except ValueError:
+            return False, "Năm sinh không hợp lệ"
+        if not RegisterGUI.email_is_valid(RegisterGUI,email):
+            return False, "Email sinh viên không hợp lệ"
+        
+        return True,' thành công'
+    
 
     def add_student(self):
         masv = self.msv_entry.get()
@@ -161,14 +176,15 @@ class StudentMgt:
         malop = self.malop_cb.get()
 
         #thêm vào bảng cũng như database
-        if self.is_valid_input():
+        is_valid,message = self.is_valid_input()
+        if is_valid:
             student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,malop)
             if(self.studentBUS.add_student(student_obj)):
                 self.clear_input()
                 self.get_student_to_table()
-                messagebox.showinfo('Success','Added Successfuly')
+                messagebox.showinfo('Success','Thêm'+message)
             
-        else: messagebox.showerror('Error','Invalid input!')
+        else: messagebox.showerror('Error',message)
 
     def update_student(self):
         masv = self.msv_entry.get()
@@ -177,23 +193,24 @@ class StudentMgt:
         gioitinh = self.gioitinh_cb.get()
         email = self.email_entry.get()
         malop = self.malop_cb.get()
-        if self.is_valid_input():
+        is_valid,message = self.is_valid_input()
+        if is_valid:
             student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,malop)
             if(self.studentBUS.update_student(student_obj)):
                 self.clear_input()
                 self.get_student_to_table()
-                messagebox.showinfo('Success','Updated Successfuly')
+                messagebox.showinfo('Success','Cập nhật'+message)
             else: messagebox.showerror('Error','Không tồn tại mã sinh viên')
-        else: messagebox.showerror('Error','Invalid input!')
+        else: messagebox.showerror('Error',message)
 
     def delete_student(self):
         masv = self.msv_entry.get()
         if(self.studentBUS.delete_student(masv)):
                 self.clear_input()
                 self.get_student_to_table()
-                messagebox.showinfo('Success','Deleted Successfuly')
+                messagebox.showinfo('Success','Xoá thành công')
             
-        else: messagebox.showerror('Error','Invalid Deletion')
+        else: messagebox.showerror('Error','Không tồn tại mã sinh viên')
 
     def search_by_IDorName(self):
         search_text = self.search_entry.get()

@@ -57,6 +57,8 @@ class ClassMgt:
         self.search_entry.place(x=100,y=10)
         search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_ID)
         search_button.place(x=350,y=10)
+        reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_class_to_table)
+        reset_button.place(x=460,y=10)
 
         self.table = ttk.Treeview(frame,height=23)
         self.table['columns'] = ('Mã Lớp', 'Tên Lớp', 'Mã Khoa')
@@ -80,10 +82,11 @@ class ClassMgt:
         tenlop = self.tenlop_entry.get() 
         makhoa = self.khoa_cb.get()
 
-            
         if malop == '' or tenlop == '' or makhoa == '':
-            return False
-        return True   
+            return False,"Vui lòng nhập đầy đủ thông tin"
+        if not malop.isdigit():
+            return False,"Mã lớp chỉ nhập số"
+        return True,' thành công'
         
     # check input and add class to database
     def add_class(self):
@@ -91,13 +94,14 @@ class ClassMgt:
         tenlop = self.tenlop_entry.get()
         makhoa = self.khoa_cb.get()
 
-        if self.is_valid_input():
+        is_valid,message = self.is_valid_input()
+        if is_valid:
             if(self.classBUS.add_class(malop, tenlop, makhoa)):
                 self.clear_input()
                 self.get_class_to_table()
-                messagebox.showinfo('Success','Added Successfully')
-            else:
-                messagebox.showerror('Error','Invalid input!')
+                messagebox.showinfo('Success','Thêm'+message)
+        else:
+            messagebox.showerror('Error',message)
 
     # clear input
     def clear_input(self):
@@ -119,18 +123,19 @@ class ClassMgt:
 
         #check if class exists
         if not self.classBUS.get_class_by_id(malop):
-            messagebox.showerror('Error', 'Class ID does not exist!')
+            messagebox.showerror('Error', 'Mã lớp không tồn tại')
             return
-
-        if self.is_valid_input():
+        
+        is_valid,message = self.is_valid_input()
+        if is_valid:
             if(self.classBUS.update_class(malop, tenlop, makhoa)):
                 self.clear_input()
                 self.get_class_to_table()
-                messagebox.showinfo('Success','Updated Successfully')
+                messagebox.showinfo('Success','Cập nhật'+message)
             else:
-                messagebox.showerror('Error','Failed to update!')
+                messagebox.showerror('Error','Cập nhật thất bại')
         else:
-            messagebox.showerror('Error','Invalid input!')
+            messagebox.showerror('Error',message)
 
             
     # delete class
@@ -139,9 +144,9 @@ class ClassMgt:
         if(self.classBUS.delete_class(malop)):
             self.clear_input()
             self.get_class_to_table()
-            messagebox.showinfo('Success','Deleted Successfully')
+            messagebox.showinfo('Success','Xoá thành công')
         else:
-            messagebox.showerror('Error','Invalid Deletion')
+            messagebox.showerror('Error','Không tồn tại mã lớp')
 
  
     # get all class to table

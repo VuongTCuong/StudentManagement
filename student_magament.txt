@@ -1,18 +1,18 @@
 create table if not exists Khoa(
-    makhoa INTEGER PRIMARY KEY,
+    makhoa TEXT PRIMARY KEY,
     tenkhoa TEXT NOT NULL UNIQUE
 );
 
 create table if not exists Lop(
     malop INTEGER PRIMARY KEY,
     tenlop TEXT UNIQUE,
-    makhoa INTEGER,
+    makhoa TEXT,
     FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
 );
 create table if not exists SinhVien(
     masv INTEGER PRIMARY KEY,
     tensv TEXT NOT NULL,
-    namsinh INTEGER NOT NULL,
+    namsinh TEXT NOT NULL,
     gioitinh TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     malop INTEGER,
