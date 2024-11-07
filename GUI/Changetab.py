@@ -86,7 +86,7 @@ class Changetab:
 
     def right_frame(self):
         self.right_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width*2/3)
-        self.right_frame.pack(side='left',padx=20)
+        self.right_frame.pack(side='right',padx=20)
     def center_frame(self):
         self.center_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width*2/3)
         self.center_frame.pack(side='left',padx=20)

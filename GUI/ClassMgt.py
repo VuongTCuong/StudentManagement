@@ -60,7 +60,11 @@ class ClassMgt:
         reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_class_to_table)
         reset_button.place(x=460,y=10)
 
-        self.table = ttk.Treeview(frame,height=23)
+        #Add scrollbar
+        scrollbar = ctk.CTkScrollableFrame(frame,width=700,height=450)
+        scrollbar.place(x=10,y=50)
+
+        self.table = ttk.Treeview(scrollbar,height=23)
         self.table['columns'] = ('Mã Lớp', 'Tên Lớp', 'Mã Khoa')
         self.table.heading('Mã Lớp', text='Mã Lớp')
         self.table.heading('Tên Lớp', text='Tên Lớp')
@@ -71,7 +75,7 @@ class ClassMgt:
         self.table.column('Mã Lớp', width=200)
         self.table.column('Tên Lớp', width=300)
         self.table.column('Mã Khoa', width=200)
-        self.table.place(x=10,y=50)
+        self.table.pack(side='left')
         self.table.bind('<Button-1>',self.write_all_input)
 
         self.get_class_to_table()

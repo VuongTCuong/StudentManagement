@@ -122,7 +122,12 @@ class StudentMgt:
         search_button.place(x=350,y=10)
         reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_student_to_table)
         reset_button.place(x=460,y=10)
-        self.table = ttk.Treeview(frame,height=23)
+
+        #Add scrollbar
+        scrollbar = ctk.CTkScrollableFrame(frame,width=750,height=450)
+        scrollbar.place(x=10,y=50)
+
+        self.table = ttk.Treeview(scrollbar,height=23)
         self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email', 'Mã Lớp')
         self.table.heading('Mã SV', text='Mã SV')
         self.table.heading('Họ Tên', text='Họ Tên')
@@ -139,7 +144,7 @@ class StudentMgt:
         self.table.column('Giới Tính', width=100)
         self.table.column('Email', width=150)
         self.table.column('Mã Lớp', width=100)
-        self.table.place(x=10,y=50)
+        self.table.pack(side='left')
         self.table.bind('<Button-1>',self.write_all_input)
 
         self.get_student_to_table()
