@@ -12,12 +12,34 @@ class DepartmentMgt:
         #student form   
         makhoa_lab = ctk.CTkLabel(frame,text="Mã Khoa:")
         makhoa_lab.place(x=10,y=10)
-        self.makhoa_entry = ctk.CTkEntry(frame,width=230)
+        # self.makhoa_entry = ctk.CTkEntry(frame,width=230)
+        self.makhoa_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập Mã Khoa",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.makhoa_entry.place(x=100,y=10)
 
         tenkhoa_lab = ctk.CTkLabel(frame,text="Tên Khoa:")
         tenkhoa_lab.place(x=10,y=50)
-        self.tenkhoa_entry = ctk.CTkEntry(frame,width=230)
+        # self.tenkhoa_entry = ctk.CTkEntry(frame,width=230)
+        self.tenkhoa_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập Tên Khoa",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.tenkhoa_entry.place(x=100,y=50)
 
 
@@ -36,7 +58,18 @@ class DepartmentMgt:
         #student table
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
+        # self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
+        self.search_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập Mã Khoa để tìm kiếm",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.search_entry.place(x=100,y=10)
         search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_ID)
         search_button.place(x=350,y=10)

@@ -66,7 +66,18 @@ class ScoreMgt:
     def create_tableframe(self,frame):
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
+        # self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
+        self.search_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập mã khoa để tìm kiếm",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
         self.search_entry.place(x=100,y=10)
         search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm')
         search_button.place(x=350,y=10)
