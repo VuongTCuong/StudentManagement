@@ -20,7 +20,7 @@ class Forgot_pwdGUI:
 
         # Main login window
         self.root = ctk.CTk()
-        self.root.title("Student Management System - Forgot Password")
+        self.root.title("Student Management System - Quên mật khẩu")
         self.root.geometry("450x150")
         self.root.resizable(False, False)
 
@@ -47,7 +47,7 @@ class Forgot_pwdGUI:
         # email_label = ctk.CTkLabel(register_frame, text="Email:",anchor="w")
         email_label = ctk.CTkLabel(
             forgot_frame,
-            text="Enter your account's email:",
+            text="Nhập email của bạn:",
             anchor="w",                 
             text_color="#333333",        
             font=("Arial", 14, "bold")   
@@ -57,7 +57,7 @@ class Forgot_pwdGUI:
         #Create email entry
         self.email_entry = ctk.CTkEntry(
             forgot_frame,
-            placeholder_text="Enter Email",  
+            placeholder_text="Nhập Email",  
             width=200,                    
             height=35,                    
             border_width=0,               
@@ -68,7 +68,7 @@ class Forgot_pwdGUI:
         )
         self.email_entry.grid(row=0, column=1, columnspan=2, pady=12, padx=10)
         # Create send OTPs button
-        self.sendOTP_button = ctk.CTkButton(forgot_frame, text="Send OTP", command=self.on_send_otp)
+        self.sendOTP_button = ctk.CTkButton(forgot_frame, text="Gửi mã xác thực", command=self.on_send_otp)
         self.sendOTP_button.grid(row=1, column=0, columnspan=3, pady=12)
 
 
@@ -81,29 +81,29 @@ class Forgot_pwdGUI:
     def on_send_otp(self):
         user_email = self.email_entry.get()
         if not user_email:
-            messagebox.showerror("Error", "Please enter your email.")
+            messagebox.showerror("Lỗi", "Hãy nhập email của bạn.")
         else:
             if self.email_is_valid(user_email):
                 #check if email is in database or not
                 if not self.userBUS.userDAL.existed_email(user_email):
-                    messagebox.showerror("Error", "Email is not existed in database.")
+                    messagebox.showerror("Lỗi", "Email không tồn tại trong database.")
                 else:
                     #generate 4 OTPs 
                     self.otp_code = random.randint(1000,9999)
                     #send code via email
                     if self.send_otp_codes(user_email):
-                        messagebox.showinfo("Success", "OTPs have been sent to your email.")
+                        messagebox.showinfo("Thành công", "Mã xác thực đã được gửi đến email của bạn.")
                         self.sendOTP_button.configure(state = "disabled")
                         self.create_otp_window(user_email)
                     else:
-                        messagebox.showerror("Error", "Can not send OTPs.")
+                        messagebox.showerror("Lỗi", "Không thể gửi mã xác thực.")
             else:
-                messagebox.showerror("Error", "Invalid email")
+                messagebox.showerror("Lỗi", "Email không hợp lệ.")
 
     def send_otp_codes(self, reciever_email):
         try: 
-            subject = "You are changing your password"
-            body = f"Your code is: {self.otp_code}"
+            subject = f"Bạn đang đổi mật khẩu tài khoản Student Management."
+            body = f"Mã xác thực của bạn là: {self.otp_code} . Không chia sẽ mã này với ai để bảo mật."
 
             #config email
             smtp_server = 'smtp.gmail.com' #This specifies the SMTP (Simple Mail Transfer Protocol) server for Gmail.
@@ -131,18 +131,18 @@ class Forgot_pwdGUI:
     def create_otp_window(self, email):
         #create OTP window
         OTP_window = ctk.CTkToplevel(self.root)
-        OTP_window.title("Student Management System - OTP Verification")
+        OTP_window.title("Student Management System - Xác thực đổi mật khẩu")
         OTP_window.geometry("500x170")
         OTP_window.resizable(False,False)
 
         #Title Label
-        title_lbl = ctk.CTkLabel(OTP_window, text="Enter your OTPs sent via email", font=("Arial", 24, "bold"), text_color="dark blue")
+        title_lbl = ctk.CTkLabel(OTP_window, text="Nhập mã xác thực đã được gửi qua email", font=("Arial", 24, "bold"), text_color="dark blue")
         title_lbl.pack(pady = 15)
 
         #####   Entry for OTP  ######
         otp_entry = ctk.CTkEntry(
             OTP_window,
-            placeholder_text="Your OTP codes",  
+            placeholder_text="nhập mã xác thực",  
             width=200,                    
             height=35,                    
             border_width=1,               
@@ -156,30 +156,30 @@ class Forgot_pwdGUI:
         def verify_otp():
             entered_code = otp_entry.get()
             if entered_code != str(self.otp_code):
-                messagebox.showerror("Error", "Incorrect OTP")
+                messagebox.showerror("Lỗi", "Mã xác thực không đúng")
             else:
                 OTP_window.destroy()
                 self.create_new_pwd_window(email)
                 
-        submit_button = ctk.CTkButton(OTP_window, text="Verify OTP", command=verify_otp)
+        submit_button = ctk.CTkButton(OTP_window, text="Xác thực", command=verify_otp)
         submit_button.pack(pady = 10)
 
 
     def create_new_pwd_window(self, email):
         #create OTP window
         newpwd_window = ctk.CTkToplevel(self.root)
-        newpwd_window.title("Student Management System - New Password")
+        newpwd_window.title("Student Management System - Mật Khẩu Mới")
         newpwd_window.geometry("500x370")
         newpwd_window.resizable(False, False)
 
         #Title Label
-        title_lbl = ctk.CTkLabel(newpwd_window, text="Change you password", font=("Arial", 24, "bold"), text_color="dark blue")
+        title_lbl = ctk.CTkLabel(newpwd_window, text="Đổi mật khẩu", font=("Arial", 24, "bold"), text_color="dark blue")
         title_lbl.pack(pady = 15)
 
         #Create new password label
         newpwd_label = ctk.CTkLabel(
             newpwd_window,
-            text="New Password:",
+            text="Mật khẩu mới:",
             anchor="w",                 
             text_color="#333333",        
             font=("Arial", 14, "bold")   
@@ -189,7 +189,7 @@ class Forgot_pwdGUI:
         #Create new password entry
         newpwd_entry = ctk.CTkEntry(
             newpwd_window,
-            placeholder_text="Enter Password", show = "*",
+            placeholder_text="Nhập mật khẩu mới", show = "*",
             width=200,                    
             height=35,                    
             border_width=0,               
@@ -203,7 +203,7 @@ class Forgot_pwdGUI:
         #Create new conf-password label
         confpwd_label = ctk.CTkLabel(
             newpwd_window,
-            text="Confirm Password:",
+            text="Xác nhận mật khẩu: ",
             anchor="w",                 
             text_color="#333333",        
             font=("Arial", 14, "bold")   
@@ -213,7 +213,7 @@ class Forgot_pwdGUI:
         #Create new conf-password entry
         confpwd_entry = ctk.CTkEntry(
             newpwd_window,
-            placeholder_text="Confirm Password",  show = "*",
+            placeholder_text="Xác nhận mật khẩu",  show = "*",
             width=200,                    
             height=35,                    
             border_width=0,               
@@ -228,16 +228,16 @@ class Forgot_pwdGUI:
             new_pwd = newpwd_entry.get()
             conf_pwd = confpwd_entry.get()
             if new_pwd != conf_pwd:
-                messagebox.showerror("Error", "Password does not match")
+                messagebox.showerror("Lỗi", "Mật khẩu không khớp.")
             else:
                 #Update password in database
                 if self.userBUS.update_pwd(email, new_pwd):
-                    messagebox.showinfo("Success", "Password is changed")
+                    messagebox.showinfo("Thành công", "Mật khẩu đã được đổi.")
                     # newpwd_window.destroy()
                     self.root.destroy()
                 else:
-                    messagebox.showerror("Error", "Can not change password")
-        submit_button = ctk.CTkButton(newpwd_window, text="Change password", command=update_pwd)
+                    messagebox.showerror("Lỗi", "Không thể đổi mật khẩu")
+        submit_button = ctk.CTkButton(newpwd_window, text="Đổi mật khẩu", command=update_pwd)
         submit_button.pack(pady = 10)
 
 

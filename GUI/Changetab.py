@@ -3,6 +3,7 @@ import StudentMgt
 import ClassMgt
 import DepartmentMgt
 import ScoreMgt
+import SubjectMgt
 import sys
 from tkinter import messagebox
 import LoginGUI
@@ -58,6 +59,10 @@ class Changetab:
 
         diem_tab_button = ctk.CTkButton(self.top_frame, text='Điểm',width=80,command=self.changeto_score_tab)
         diem_tab_button.place(x=260, y=y_center)
+
+        #align 85px each
+        mon_tab_button = ctk.CTkButton(self.top_frame, text='Môn học',width=80,command=self.changeto_subject_tab)
+        mon_tab_button.place(x=345, y=y_center)
 
         #logout
         logout_button = ctk.CTkButton(self.top_frame, text='Đăng xuất',width=80,command=self.logout)
@@ -120,7 +125,7 @@ class Changetab:
             self.destroy_LeftRight_children()
 
             student = StudentMgt.StudentMgt()
-            self.root.title("Student Management System - Student Management") 
+            self.root.title("Student Management System - Quản lý sinh viên") 
             student.create_interactframe(self.left_frame)
             student.create_tableframe(self.right_frame)
             self.cur_tab ='StudentMgt'
@@ -130,7 +135,7 @@ class Changetab:
             self.destroy_LeftRight_children()
 
             class_obj = ClassMgt.ClassMgt()
-            self.root.title("Student Management System - Class Management")
+            self.root.title("Student Management System - Quản lý lớp")
             class_obj.create_interactframe(self.left_frame)
             class_obj.create_tableframe(self.right_frame)
             self.cur_tab='ClassMgt'
@@ -139,7 +144,7 @@ class Changetab:
         if self.cur_tab!='DepartmentMgt':
             self.destroy_LeftRight_children()
             department = DepartmentMgt.DepartmentMgt()
-            self.root.title("Student Management System - Department Management")
+            self.root.title("Student Management System - Quản lý khoa")
             department.create_interactframe(self.left_frame)
             department.create_tableframe(self.right_frame)
             self.cur_tab='DepartmentMgt'
@@ -149,7 +154,19 @@ class Changetab:
             self.destroy_LeftRight_children()
 
             score = ScoreMgt.ScoreMgt()
-            self.root.title("Student Management System - Score Management")
+            self.root.title("Student Management System - Quản lý điểm")
             score.create_interactframe(self.left_frame) 
             score.create_tableframe(self.right_frame)
             self.cur_tab='ScoreMgt'
+
+    def changeto_subject_tab(self):
+        if self.cur_tab!='SubjectMgt':
+            self.destroy_LeftRight_children()
+
+            subject = SubjectMgt.SubjectMgt()
+            self.root.title("Student Management System - Quản lý Môn học")
+            subject.create_interactframe(self.left_frame) 
+            subject.create_tableframe(self.right_frame)
+            self.cur_tab='SubjectMgt'
+
+        

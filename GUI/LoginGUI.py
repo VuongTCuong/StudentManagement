@@ -21,10 +21,12 @@ class LoginGUI:
     def __init__(self):
         self.userBUS = userBUS.userBUS()
 
+
         # Main login window
         self.root = ctk.CTk()
-        self.root.title("Student Management System - Login")
-        self.root.geometry("540x270")
+        self.root.protocol("WM_DELETE_WINDOW", self.root.quit())
+        self.root.title("Student Management System - Đăng Nhập")
+        self.root.geometry("600x270")
         self.root.resizable(False, False)
 
         # Set appearance mode and default theme
@@ -64,14 +66,14 @@ class LoginGUI:
 
         #Create labels
         #title Label
-        login_title = ctk.CTkLabel(loginbox_frame, text="Login", font=("Arial", 24, "bold"), text_color="dark blue")
+        login_title = ctk.CTkLabel(loginbox_frame, text="Đăng nhập", font=("Arial", 24, "bold"), text_color="dark blue")
         login_title.grid(row = 0, column = 0, columnspan = 3, pady = 5)
 
         #username label
         # username_label = ctk.CTkLabel(loginbox_frame, text="Username:")
         username_label = ctk.CTkLabel(
             loginbox_frame,
-            text="Username:",
+            text="Tên Đăng Nhập:",
             anchor="w",                 
             text_color="#333333",        
             font=("Arial", 14, "bold")   
@@ -81,7 +83,7 @@ class LoginGUI:
         #username entry
         self.username_entry = ctk.CTkEntry(
             loginbox_frame,
-            placeholder_text="Username",  # Adds placeholder
+            placeholder_text="Tên Đăng Nhập",  # Adds placeholder
             width=200,                    # Width of the entry field
             height=35,                    # Height of the entry
             border_width=0,               # no border
@@ -95,7 +97,7 @@ class LoginGUI:
         # pwd_label = ctk.CTkLabel(loginbox_frame, text="Password:")
         pwd_label = ctk.CTkLabel(
             loginbox_frame,
-            text="Password:",
+            text="Mật khẩu:",
             anchor="w",                 
             text_color="#333333",        
             font=("Arial", 14, "bold")   
@@ -106,7 +108,7 @@ class LoginGUI:
         # Customize the entry field with a modern style
         self.password_entry = ctk.CTkEntry(
             loginbox_frame,
-            placeholder_text="Password",  show ="*",
+            placeholder_text="Mật khẩu",  show ="*",
             width=200,                    
             height=35,                    
             border_width=0,               
@@ -118,15 +120,15 @@ class LoginGUI:
         self.password_entry.grid(row = 2, column = 1, padx = 10, pady = 5)
 
         #login button
-        login_btn = ctk.CTkButton(loginbox_frame, text="Login", command=self.on_login)
+        login_btn = ctk.CTkButton(loginbox_frame, text="Đăng Nhập", command=self.on_login)
         login_btn.grid(row = 3, column = 0, columnspan = 2, ipadx = 50, pady = 5)
 
         #register button
-        btn_register = ctk.CTkButton(loginbox_frame, text="Register", command=self.on_register)
+        btn_register = ctk.CTkButton(loginbox_frame, text="Tạo tài khoản", command=self.on_register)
         btn_register.grid(row = 4, column = 0, columnspan = 2,ipadx = 50, pady = 5)
 
         #forgot password button
-        btn_forgot_pwd = ctk.CTkButton(loginbox_frame, text="Forgot Password", fg_color="transparent", 
+        btn_forgot_pwd = ctk.CTkButton(loginbox_frame, text="Quên mật khẩu?", fg_color="transparent", 
                                         hover_color="light blue",
                                         text_color="black",
                                         anchor="center", 
@@ -145,7 +147,7 @@ class LoginGUI:
             self.root.destroy() #close login
             Changetab.Changetab() #change manage screen
         else:
-            messagebox.showerror("Login Failed", "Invalid username or password.")
+            messagebox.showerror("Đăng nhập thất bại", "Tên đăng nhập hoặc mật khẩu không đúng.")
        
     def on_register(self):
         RegisterGUI.RegisterGUI()
