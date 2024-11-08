@@ -2,9 +2,13 @@ import customtkinter as ctk
 import StudentMgt
 import ClassMgt
 import DepartmentMgt
+import ScoreMgt
 import sys
 from tkinter import messagebox
 import LoginGUI
+import tkinter as tk
+
+
 class Changetab:
     def __init__(self):
         self.root = ctk.CTk()
@@ -52,6 +56,9 @@ class Changetab:
         khoa_tab_button = ctk.CTkButton(self.top_frame, text='Khoa',width=80,command=self.changeto_department_tab)
         khoa_tab_button.place(x=175, y=y_center)
 
+        diem_tab_button = ctk.CTkButton(self.top_frame, text='Điểm',width=80,command=self.changeto_score_tab)
+        diem_tab_button.place(x=260, y=y_center)
+
         #logout
         logout_button = ctk.CTkButton(self.top_frame, text='Đăng xuất',width=80,command=self.logout)
         logout_button.place(x=1180,y=y_center)
@@ -79,7 +86,10 @@ class Changetab:
 
     def right_frame(self):
         self.right_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width*2/3)
-        self.right_frame.pack(side='left',padx=20)
+        self.right_frame.pack(side='right',padx=20)
+    def center_frame(self):
+        self.center_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width*2/3)
+        self.center_frame.pack(side='left',padx=20)
 
     def set_current_tab(self,tab_name):
         if tab_name=='StudentMgt':
@@ -94,6 +104,10 @@ class Changetab:
             department = DepartmentMgt.DepartmentMgt()
             department.create_interactframe(self.left_frame)
             department.create_tableframe(self.right_frame)
+        elif tab_name=='ScoreMgt':
+            score = ScoreMgt.ScoreMgt()
+            score.create_interactframe(self.left_frame)
+            score.create_tableframe(self.right_frame)
 
     def destroy_LeftRight_children(self):
         for i in self.left_frame.winfo_children():
@@ -129,3 +143,13 @@ class Changetab:
             department.create_interactframe(self.left_frame)
             department.create_tableframe(self.right_frame)
             self.cur_tab='DepartmentMgt'
+    
+    def changeto_score_tab(self):
+        if self.cur_tab!='ScoreMgt':
+            self.destroy_LeftRight_children()
+
+            score = ScoreMgt.ScoreMgt()
+            self.root.title("Student Management System - Score Management")
+            score.create_interactframe(self.left_frame) 
+            score.create_tableframe(self.right_frame)
+            self.cur_tab='ScoreMgt'

@@ -42,7 +42,12 @@ class DepartmentMgt:
         search_button.place(x=350,y=10)
         reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_department_to_table)
         reset_button.place(x=460,y=10)
-        self.table = ttk.Treeview(frame,height=23)
+        
+        #Add scrollbar
+        scrollbar = ctk.CTkScrollableFrame(frame,width=700,height=450)
+        scrollbar.place(x=10,y=50)
+
+        self.table = ttk.Treeview(scrollbar,height=23)
         self.table['columns'] = ('Mã Khoa', 'Tên Khoa')
         self.table.heading('Mã Khoa', text='Mã Khoa')
         self.table.heading('Tên Khoa', text='Tên Khoa')
@@ -51,7 +56,7 @@ class DepartmentMgt:
         self.table.column("#0", width=0, stretch=ctk.NO)
         self.table.column('Mã Khoa', width=300)
         self.table.column('Tên Khoa', width=400)
-        self.table.place(x=10,y=50)
+        self.table.pack(side='left')
         self.table.bind('<ButtonRelease-1>', self.write_all_input)
 
         self.get_department_to_table()

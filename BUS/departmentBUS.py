@@ -14,7 +14,6 @@ class departmentBUS:
         try:
             # Create department object with updated data
             department = departmentDTO.departmentDTO(makhoa, tenkhoa)
-            
             # Call DAO to update in database
             result = self.departmentDAL.update_department(department)
             return result

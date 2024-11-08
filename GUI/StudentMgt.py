@@ -44,7 +44,7 @@ class StudentMgt:
         )
         self.hoten_entry.place(x=100,y=50)
 
-        namsinh_lab = ctk.CTkLabel(frame,text="Năm Sinh:")
+        namsinh_lab = ctk.CTkLabel(frame,text="Ngày Sinh:")
         namsinh_lab.place(x=10,y=90)
         # self.namsinh_entry = ctk.CTkEntry(frame,width=230)
         self.namsinh_entry = ctk.CTkEntry(
@@ -81,14 +81,14 @@ class StudentMgt:
         )
         self.email_entry.place(x=100,y=170)
 
-        malop_lab = ctk.CTkLabel(frame,text="Mã Lớp:")
+        malop_lab = ctk.CTkLabel(frame,text="Lớp:")
         malop_lab.place(x=10,y=210)
 
         #Get all class
         clas_BUS = classBUS.classBUS()
         all_class = clas_BUS.get_all_class()
-        malop = [str(malop[0]) for malop in all_class] 
-        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=malop,state='readonly')
+        tenlop = [str(tenlop[1]) for tenlop in all_class] 
+        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=tenlop,state='readonly')
         self.malop_cb.place(x=100,y=210)
 
         #button 
@@ -122,7 +122,12 @@ class StudentMgt:
         search_button.place(x=350,y=10)
         reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_student_to_table)
         reset_button.place(x=460,y=10)
-        self.table = ttk.Treeview(frame,height=23)
+
+        #Add scrollbar
+        scrollbar = ctk.CTkScrollableFrame(frame,width=750,height=450)
+        scrollbar.place(x=10,y=50)
+
+        self.table = ttk.Treeview(scrollbar,height=23)
         self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email', 'Mã Lớp')
         self.table.heading('Mã SV', text='Mã SV')
         self.table.heading('Họ Tên', text='Họ Tên')
@@ -139,7 +144,7 @@ class StudentMgt:
         self.table.column('Giới Tính', width=100)
         self.table.column('Email', width=150)
         self.table.column('Mã Lớp', width=100)
-        self.table.place(x=10,y=50)
+        self.table.pack(side='left')
         self.table.bind('<Button-1>',self.write_all_input)
 
         self.get_student_to_table()
