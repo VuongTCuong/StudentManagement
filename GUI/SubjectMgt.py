@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import ttk, messagebox
-from BUS import departmentBUS, classBUS
+from BUS import departmentBUS, classBUS, subjectBUS
 #from BUS import scoreBUS
 
 class SubjectMgt:
@@ -65,13 +65,13 @@ class SubjectMgt:
         self.khoa_cb.place(x=100,y=90)
 
         #button 
-        add_button = ctk.CTkButton(frame,text='Thêm',width=90)
+        add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_subject)
         add_button.place(x=10,y=180)
-        reset_button = ctk.CTkButton(frame,text='Reset',width=90)
+        reset_button = ctk.CTkButton(frame,text='Reset',width=90,command=self.clear_input)
         reset_button.place(x=105,y=180)
-        update_button = ctk.CTkButton(frame,text='Cập nhật',width=90)
+        update_button = ctk.CTkButton(frame,text='Cập nhật',width=90,command=self.update_subject)
         update_button.place(x=200,y=180)
-        delete_button = ctk.CTkButton(frame,text='Xoá',width=90)
+        delete_button = ctk.CTkButton(frame,text='Xoá',width=90,command=self.delete_subject)
         delete_button.place(x=295,y=180)
     
     def create_tableframe(self,frame):
@@ -80,7 +80,7 @@ class SubjectMgt:
         # self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
         self.search_entry = ctk.CTkEntry(
             frame,
-            placeholder_text="Nhập mã khoa để tìm kiếm",  
+            placeholder_text="Nhập mã Môn để tìm kiếm",  
             width=230,                    
             height=35,                    
             border_width=0,               
@@ -100,27 +100,143 @@ class SubjectMgt:
         scrollbar.place(x=10,y=50)
         # Create Treeview
         self.table = ttk.Treeview(scrollbar,height=23)
-        self.table['columns'] = ('Mã Môn', 'Tên Môn', 'Khoa')
+        self.table['columns'] = ('mamonhoc', 'tenmonhoc', 'makhoa')
         
         # Define columns
-        self.table.heading('Mã Môn', text='Mã Môn')
-        self.table.heading('Tên Môn', text='Tên Môn') 
-        self.table.heading('Khoa', text='Khoa')
+        self.table.heading('mamonhoc', text='Mã Môn')
+        self.table.heading('tenmonhoc', text='Tên Môn') 
+        self.table.heading('makhoa', text='Khoa')
 
         # Configure column widths
         self.table.column("#0", width=0, stretch=ctk.NO)
-        self.table.column('Mã Môn', width=150)
-        self.table.column('Tên Môn', width=300)
-        self.table.column('Khoa', width=150)
+        self.table.column('mamonhoc', width=150)
+        self.table.column('tenmonhoc', width=300)
+        self.table.column('makhoa', width=150)
     
         self.table.pack(side='left')
-        self.table.bind('<ButtonRelease-1>')
-   
+        self.table.bind('<ButtonRelease-1>', self.write_all_input)
+        self.get_subject_to_table()
+        
+    def clear_input(self):
+        self.mamon_entry.configure(state='normal',fg_color='white')
+        self.mamon_entry.delete(0, 'end')
+        self.tenmon_entry.delete(0, 'end')
+        self.khoa_cb.set('')
+        self.tenkhoa_entry.configure(state='normal')
+        self.tenkhoa_entry.delete(0, 'end')
+        self.tenkhoa_entry.configure(state='disabled')
+
+    def get_subject_to_table(self):
+        try:
+            self.table.delete(*self.table.get_children())
+            subject_bus = subjectBUS.subjectBUS()
+            subjects = subject_bus.get_all_subjects()
+            print("Fetched subjects:", subjects)  # Debug print
+            for subject in subjects:
+                self.table.insert('', 'end', values=subject)
+        except Exception as e:
+            print("Error loading subjects:", str(e))  # Debug print
+            messagebox.showerror("Error", f"Failed to load subjects: {str(e)}")
+
     def search_by_ID(self):
-        pass
-    
-    def get_class_to_table(self):
-        pass       
+        search_value = self.search_entry.get()
+        if search_value:
+            self.table.delete(*self.table.get_children())
+            subject_bus = subjectBUS.subjectBUS()
+            subjects = subject_bus.search_subject(search_value)
+            for subject in subjects:
+                self.table.insert('', 'end', values=subject)
+        else:
+            messagebox.showwarning("Warning", "Please enter a subject ID to search")
+
+    def reset_table(self):
+        self.search_entry.delete(0, 'end')
+        self.get_subject_to_table()
+
+    def add_subject(self):
+        try:
+            mamonhoc = self.mamon_entry.get().strip()
+            tenmonhoc = self.tenmon_entry.get().strip()
+            makhoa = self.khoa_cb.get().strip()  # Get selected department from combobox
+
+            if mamonhoc and tenmonhoc and makhoa:
+                subject_bus = subjectBUS.subjectBUS()
+                result = subject_bus.add_subject(mamonhoc, tenmonhoc, makhoa)
+                if result:
+                    messagebox.showinfo("Success", "Subject added successfully")
+                    self.clear_input()
+                    self.get_subject_to_table()
+                else:
+                    messagebox.showerror("Error", "Failed to add subject")
+            else:
+                messagebox.showwarning("Warning", "Please fill all fields")
+        except Exception as e:
+            messagebox.showerror("Error", f"Add failed: {str(e)}")
+
+    def update_subject(self):
+        mamonhoc = self.mamon_entry.get()
+        tenmonhoc = self.tenmon_entry.get()
+        makhoa = self.khoa_cb.get()
+
+        if mamonhoc and tenmonhoc and makhoa:
+            subject_bus = subjectBUS.subjectBUS()
+            result = subject_bus.update_subject(mamonhoc, tenmonhoc, makhoa)
+            if result:
+                messagebox.showinfo("Success", "Subject updated successfully")
+                self.clear_input()
+                self.get_subject_to_table()
+                self.mamon_entry.configure(state='normal', fg_color='#f2f2f2')
+            else:
+                messagebox.showerror("Error", "Failed to update subject")
+        else:
+            messagebox.showwarning("Warning", "Please fill all fields")
+
+    def delete_subject(self):
+        mamonhoc = self.mamon_entry.get()
+        if mamonhoc:
+            confirm = messagebox.askyesno("Confirm", "Are you sure you want to delete this subject?")
+            if confirm:
+                try:
+                    subject_bus = subjectBUS.subjectBUS()
+                    result = subject_bus.delete_subject(mamonhoc)
+                    if result:
+                        messagebox.showinfo("Success", "Subject deleted successfully")
+                        self.clear_input()
+                        self.get_subject_to_table()
+                        self.mamon_entry.configure(state='normal', fg_color='#f2f2f2')
+                    else:
+                        messagebox.showerror("Error", "Failed to delete subject")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Delete failed: {str(e)}")
+        else:
+            messagebox.showwarning("Warning", "Please select a subject to delete")
+
+    def write_all_input(self, event):
+        # Get item based on click position
+        clicked_item = self.table.identify('item', event.x, event.y)
+        # Get data of clicked row 
+        clicked_data = self.table.item(clicked_item)['values']
+
+        if clicked_item != '':
+            # Clear and re-enable before insert new data
+            self.mamon_entry.configure(state='normal')
+            self.clear_input()
+            
+            self.mamon_entry.insert(0, clicked_data[0])
+            self.tenmon_entry.insert(0, clicked_data[1]) 
+            self.khoa_cb.set(clicked_data[2])
+            
+            # Disable after setting the value
+            self.mamon_entry.configure(state='disabled', fg_color='lightgray')
+            
+            # Get department name based on makhoa
+            department_BUS = departmentBUS.departmentBUS()
+            department = department_BUS.get_department_by_id(clicked_data[2])
+            if department:
+                self.tenkhoa_entry.configure(state='normal')
+                self.tenkhoa_entry.delete(0, 'end')
+                self.tenkhoa_entry.insert(0, department[1])  # Assuming department name is at index 1
+                self.tenkhoa_entry.configure(state='disabled')
     
     def on_department_select(self, selected_makhoa):
         department_BUS = departmentBUS.departmentBUS()
@@ -130,4 +246,5 @@ class SubjectMgt:
             self.tenkhoa_entry.delete(0, 'end')
             self.tenkhoa_entry.insert(0, department[1])
             self.tenkhoa_entry.configure(state='disabled')
-
+    
+    
