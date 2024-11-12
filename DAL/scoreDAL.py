@@ -1,9 +1,13 @@
 import sqlite3
 
 class scoreDAL:
-    def __init__(self):
-        self.conn = sqlite3.connect('QLSV.db')
-        self.cursor = self.conn.cursor()
+    def __init__(self, path = 'student_management.db'):
+        #connect to database SQLite
+        try:
+            self.conn = sqlite3.connect(path)
+            self.cursor = self.conn.cursor()
+        except sqlite3.Error as e:
+            print(f"Error: Can not connect to database {e}")
         
     def add_score(self,query,params):
         try:
@@ -32,23 +36,21 @@ class scoreDAL:
     def get_all_scores(self):
         try:
             self.cursor.execute('''SELECT * FROM Diem''')
-            return self.cursor.fetchall()
+            result = self.cursor.fetchall()
+            return result if result else []
         except sqlite3.Error as e:
-            print(f"Error: Can not get all scores {e}") 
+            print(f"Error: Can not get all scores {e}")
+            return []
     
-    def get_score_by_id(self,id):
-        try:
-            self.cursor.execute('''SELECT * FROM Diem WHERE id = ?''', (id,))
-            return self.cursor.fetchone()
-        except sqlite3.Error as e:
-            print(f"Error: Can not get score by id {e}") 
     
     def get_score_by_student_id(self,masv):
         try:
-            self.cursor.execute('''SELECT * FROM Diem WHERE masv = ?''', (masv,))
-            return self.cursor.fetchall()
+            self.cursor.execute('''SELECT * FROM Diem WHERE masinhvien = ?''', (masv,))
+            result = self.cursor.fetchall()
+            return result if result else []
         except sqlite3.Error as e:
-            print(f"Error: Can not get score by student id {e}") 
+            print(f"Error: Can not get score by student id {e}")
+            return []
     
     def get_score_by_subject_id(self,mamonhoc):
         try:
@@ -59,7 +61,7 @@ class scoreDAL:
     
     def get_score_by_student_and_subject_id(self,masv,mamonhoc):
         try:
-            self.cursor.execute('''SELECT * FROM Diem WHERE masv = ? AND mamonhoc = ?''', (masv,mamonhoc))
+            self.cursor.execute('''SELECT * FROM Diem WHERE masinhvien = ? AND mamonhoc = ?''', (masv,mamonhoc))
             return self.cursor.fetchone()
         except sqlite3.Error as e:
             print(f"Error: Can not get score by student and subject id {e}") 

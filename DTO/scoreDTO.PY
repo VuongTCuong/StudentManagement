@@ -1,17 +1,9 @@
-class ScoreDTO:
-    _next_id = 1  # Class variable to keep track of the next available ID
-    
-    def __init__(self, masv, mamonhoc, diem):
-        self._id = ScoreDTO._next_id
-        ScoreDTO._next_id += 1
-        self.masv = masv
+class scoreDTO:
+    def __init__(self,mamonhoc,masinhvien,diem):
         self.mamonhoc = mamonhoc
+        self.masinhvien = masinhvien
         self.diem = diem
     
-    @property
-    def id(self):
-        return self._id
+    def __str__(self):
+        return f"Masv: {self.masinhvien}, Mamonhoc: {self.mamonhoc}, Diem: {self.diem}"
     
-    @id.setter
-    def id(self, value):
-        self._id = value

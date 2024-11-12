@@ -4,10 +4,11 @@ from DTO import scoreDTO
 from BUS import scoreBUS
 
 
+
 class ScoreMgt:
     def __init__(self):
         self.root = ctk.CTk()
-        self.scoreBUS = scoreBUS.ScoreBUS()
+        self.scoreBUS = scoreBUS.scoreBUS()
     
     def create_interactframe(self,frame):
         mamon_lab = ctk.CTkLabel(frame,text="Mã Môn:")
@@ -106,6 +107,8 @@ class ScoreMgt:
     
         self.table.pack(side='left')
         self.table.bind('<ButtonRelease-1>', self.write_all_input)
+        
+        self.get_all_scores()
     
     def clear_input(self):
         if(self.mamon_entry._state=='disabled'):
@@ -126,11 +129,11 @@ class ScoreMgt:
         diem = self.diem_entry.get()
         is_valid,message = self.is_valid_input()
         if is_valid:
-            score_obj = scoreDTO.ScoreDTO(mamon,masv,diem)
+            score_obj = scoreDTO.scoreDTO(mamon,masv,diem)
             if(self.scoreBUS.add_score(score_obj)):
                 self.clear_input()
                 self.get_all_scores()
-                messagebox.showinfo('Success','Thêm'+message)   
+                messagebox.showinfo('Success',message)   
             else:
                 messagebox.showerror('Error',message)
         else:
@@ -142,7 +145,7 @@ class ScoreMgt:
         diem = self.diem_entry.get()
         is_valid,message = self.is_valid_input()
         if is_valid:
-            score_obj = scoreDTO.ScoreDTO(mamon,masv,diem)
+            score_obj = scoreDTO.scoreDTO(mamon,masv,diem)
             if(self.scoreBUS.update_score(score_obj)):
                 self.clear_input()
                 self.get_all_scores()
@@ -158,23 +161,34 @@ class ScoreMgt:
     
     def get_all_scores(self):
         result = self.scoreBUS.get_all_scores()
-        for i in result:
-            self.table.insert('', 'end', values=i)
+        # Clear existing items
+        for item in self.table.get_children():
+            self.table.delete(item)
+        # Only insert if we have results
+        if result:
+            for i in result:
+                self.table.insert('', 'end', values=i)
     
-    def get_score_by_id(self,mamon):
-        
-        masv = self.masv_entry.get()
+    def get_score_by_id(self,mamon,masv):
         result = self.scoreBUS.get_score_by_student_and_subject_id(masv,mamon)
         for i in result:
             self.table.insert('', 'end', values=i)  
 
     def write_all_input(self,event):
         clicked_item = self.table.identify('item',event.x,event.y)
+        
         clicked_data = self.table.item(clicked_item)['values']
-        self.mamon_entry.insert(0,clicked_data[0])
-        self.masv_entry.insert(0,clicked_data[1])
-        self.diem_entry.insert(0,clicked_data[2])
-        self.mamon_entry.configure(state='disabled',fg_color='#cfe2f3')
+
+        # Clear previous entries first
+        if clicked_item != '':
+            self.clear_input()
+            self.mamon_entry.insert(0,clicked_data[0])
+            self.masv_entry.insert(0,clicked_data[1])
+            self.diem_entry.insert(0,clicked_data[2])
+            self.mamon_entry.configure(state='disabled',fg_color='#cfe2f3')
+        
+
+
     
     def search_score(self):
         mamon = self.search_entry.get()
