@@ -1,0 +1,69 @@
+import sqlite3
+
+class scoreDAL:
+    def __init__(self):
+        self.conn = sqlite3.connect('QLSV.db')
+        self.cursor = self.conn.cursor()
+        
+    def add_score(self,query,params):
+        try:
+            self.cursor.execute(query,params)
+            self.conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"Error: Can not insert score {e}")
+    
+    def update_score(self,query,params):
+        try:
+            self.cursor.execute(query,params)
+            self.conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"Error: Can not update score {e}")  
+    
+    def delete_score(self,query,params):    
+        try:
+            self.cursor.execute(query,params)
+            self.conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"Error: Can not delete score {e}")  
+    
+    def get_all_scores(self):
+        try:
+            self.cursor.execute('''SELECT * FROM Diem''')
+            return self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error: Can not get all scores {e}") 
+    
+    def get_score_by_id(self,id):
+        try:
+            self.cursor.execute('''SELECT * FROM Diem WHERE id = ?''', (id,))
+            return self.cursor.fetchone()
+        except sqlite3.Error as e:
+            print(f"Error: Can not get score by id {e}") 
+    
+    def get_score_by_student_id(self,masv):
+        try:
+            self.cursor.execute('''SELECT * FROM Diem WHERE masv = ?''', (masv,))
+            return self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error: Can not get score by student id {e}") 
+    
+    def get_score_by_subject_id(self,mamonhoc):
+        try:
+            self.cursor.execute('''SELECT * FROM Diem WHERE mamonhoc = ?''', (mamonhoc,))
+            return self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error: Can not get score by subject id {e}") 
+    
+    def get_score_by_student_and_subject_id(self,masv,mamonhoc):
+        try:
+            self.cursor.execute('''SELECT * FROM Diem WHERE masv = ? AND mamonhoc = ?''', (masv,mamonhoc))
+            return self.cursor.fetchone()
+        except sqlite3.Error as e:
+            print(f"Error: Can not get score by student and subject id {e}") 
+    
+    def close_connection(self):
+        self.conn.close()
+        

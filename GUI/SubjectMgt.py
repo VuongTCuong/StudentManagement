@@ -3,10 +3,11 @@ from tkinter import ttk, messagebox
 from BUS import departmentBUS, classBUS, subjectBUS
 #from BUS import scoreBUS
 
+
 class SubjectMgt:
     def __init__(self):
         self.root = ctk.CTk()
-        #self.scoreBUS = scoreBUS.scoreBUS()
+        self.subjectBUS = subjectBUS.subjectBUS()
     
     def create_interactframe(self,frame):
         mamon_lab = ctk.CTkLabel(frame,text="Mã Môn:")
