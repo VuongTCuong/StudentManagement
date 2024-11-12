@@ -159,8 +159,9 @@ class SubjectMgt:
             mamonhoc = self.mamon_entry.get().strip()
             tenmonhoc = self.tenmon_entry.get().strip()
             makhoa = self.khoa_cb.get().strip()  # Get selected department from combobox
-
+            
             if mamonhoc and tenmonhoc and makhoa:
+                
                 subject_bus = subjectBUS.subjectBUS()
                 result = subject_bus.add_subject(mamonhoc, tenmonhoc, makhoa)
                 if result:

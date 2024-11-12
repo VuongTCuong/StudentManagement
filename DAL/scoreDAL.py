@@ -69,3 +69,19 @@ class scoreDAL:
     def close_connection(self):
         self.conn.close()
         
+    def check_subject_exists(self,mamonhoc):
+        try:
+            self.cursor.execute('''SELECT * FROM Monhoc WHERE mamonhoc = ?''', (mamonhoc,))
+            return self.cursor.fetchone() is not None
+        except sqlite3.Error as e:
+            print(f"Error: Can not check subject exists {e}")
+            return False
+
+    def check_student_exists(self,masinhvien):
+        try:
+            self.cursor.execute('''SELECT * FROM Sinhvien WHERE masinhvien = ?''', (masinhvien,))
+            return self.cursor.fetchone() is not None
+        except sqlite3.Error as e:
+            print(f"Error: Can not check student exists {e}")
+            return False
+        

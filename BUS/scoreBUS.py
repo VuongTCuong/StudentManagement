@@ -32,4 +32,10 @@ class scoreBUS:
     
     def close_connection(self):
         self.score_dal.close_connection()
+    
+    def check_subject_exists(self,mamonhoc):
+        return self.score_dal.check_subject_exists(mamonhoc)
+    
+    def check_student_exists(self,masinhvien):
+        return self.score_dal.check_student_exists(masinhvien)
 

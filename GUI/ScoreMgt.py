@@ -129,6 +129,14 @@ class ScoreMgt:
         diem = self.diem_entry.get()
         is_valid,message = self.is_valid_input()
         if is_valid:
+            # Check if subject and student exist
+            if not self.scoreBUS.check_subject_exists(mamon):
+                messagebox.showerror('Error', 'Mã môn không tồn tại')
+                return
+            if not self.scoreBUS.check_student_exists(masv):
+                messagebox.showerror('Error', 'Mã sinh viên không tồn tại') 
+                return
+                
             score_obj = scoreDTO.scoreDTO(mamon,masv,diem)
             if(self.scoreBUS.add_score(score_obj)):
                 self.clear_input()
@@ -145,11 +153,22 @@ class ScoreMgt:
         diem = self.diem_entry.get()
         is_valid,message = self.is_valid_input()
         if is_valid:
+            # Check if subject and student exist
+            if not self.scoreBUS.check_subject_exists(mamon):
+                messagebox.showerror('Error', 'Mã môn không tồn tại')
+                return
+            if not self.scoreBUS.check_student_exists(masv):
+                messagebox.showerror('Error', 'Mã sinh viên không tồn tại') 
+                return
             score_obj = scoreDTO.scoreDTO(mamon,masv,diem)
             if(self.scoreBUS.update_score(score_obj)):
                 self.clear_input()
                 self.get_all_scores()
                 messagebox.showinfo('Success','Cập nhật'+message)
+            else:
+                messagebox.showerror('Error',message)
+        else:
+            messagebox.showerror('Error',message)
     
     def delete_score(self):
         mamon = self.mamon_entry.get()
