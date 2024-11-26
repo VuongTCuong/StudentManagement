@@ -113,21 +113,35 @@ class ScoreMgt:
     def clear_input(self):
         if(self.mamon_entry._state=='disabled'):
             self.mamon_entry.configure(state='normal',fg_color='white')
+        if(self.masv_entry._state=='disabled'):
+            self.masv_entry.configure(state='normal',fg_color='white')
         self.mamon_entry.delete(0, 'end')
         self.masv_entry.delete(0, 'end')
         self.diem_entry.delete(0, 'end')
     
     def is_valid_input(self):
-        if(self.mamon_entry.get()=='' or self.masv_entry.get()=='' or self.diem_entry.get()==''):
-            return False,'Không được để trống'
-        return True,'Thêm thành công'
+        mamon = self.mamon_entry.get()
+        masv = self.masv_entry.get()
+        diem = self.diem_entry.get()
+        if(mamon.strip()=='' or masv.strip()=='' or diem.strip()==''):
+            return False,'Vui lòng nhập đầy đủ thông tin'
+        
+        if any(not char.isalnum() for char in mamon):
+            return False, "Mã môn học không chứa ký tự đặc biệt"
+        if any(not char.isalnum() for char in masv):
+            return False, "Mã sinh viên không chứa ký tự đặc biệt"
+        if not masv.isdigit():
+            return False,"Mã sinh viên chỉ nhập số"
+        if not diem.isdigit():
+            return False,'Điểm chỉ nhập số'
+        return True,' thành công'
     
 
     def add_score(self):
         mamon = self.mamon_entry.get()
         masv = self.masv_entry.get()
         diem = self.diem_entry.get()
-        is_valid,message = self.is_valid_input()
+        is_valid, message = self.is_valid_input()
         if is_valid:
             # Check if subject and student exist
             if not self.scoreBUS.check_subject_exists(mamon):
@@ -141,9 +155,9 @@ class ScoreMgt:
             if(self.scoreBUS.add_score(score_obj)):
                 self.clear_input()
                 self.get_all_scores()
-                messagebox.showinfo('Success',message)   
+                messagebox.showinfo('Success','Thêm'+message)   
             else:
-                messagebox.showerror('Error',message)
+                messagebox.showerror('Error','Thêm thất bại')
         else:
             messagebox.showerror('Error',message)
     
@@ -166,13 +180,20 @@ class ScoreMgt:
                 self.get_all_scores()
                 messagebox.showinfo('Success','Cập nhật'+message)
             else:
-                messagebox.showerror('Error',message)
+                messagebox.showerror('Error','Cập nhật thất bại')
         else:
             messagebox.showerror('Error',message)
     
     def delete_score(self):
         mamon = self.mamon_entry.get()
         masv = self.masv_entry.get()
+        if not self.scoreBUS.check_subject_exists(mamon):
+            messagebox.showerror('Error', 'Mã môn không tồn tại')
+            return
+        if not self.scoreBUS.check_student_exists(masv):
+            messagebox.showerror('Error', 'Mã sinh viên không tồn tại') 
+            return
+        
         if(self.scoreBUS.delete_score(mamon,masv)):
             self.clear_input()
             self.get_all_scores()
@@ -205,7 +226,7 @@ class ScoreMgt:
             self.masv_entry.insert(0,clicked_data[1])
             self.diem_entry.insert(0,clicked_data[2])
             self.mamon_entry.configure(state='disabled',fg_color='#cfe2f3')
-        
+            self.masv_entry.configure(state='disabled',fg_color='#cfe2f3')
 
 
     
@@ -217,8 +238,7 @@ class ScoreMgt:
         self.clear_input()
         self.get_all_scores()
     
-    def close_window(self):
-        self.root.destroy()
+   
     
     
 

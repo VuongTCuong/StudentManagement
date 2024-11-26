@@ -3,7 +3,6 @@ from tkinter import ttk, messagebox
 from BUS import departmentBUS, classBUS, subjectBUS
 #from BUS import scoreBUS
 
-
 class SubjectMgt:
     def __init__(self):
         self.root = ctk.CTk()
@@ -154,64 +153,73 @@ class SubjectMgt:
         self.search_entry.delete(0, 'end')
         self.get_subject_to_table()
 
+    def is_valid_input(self):
+        mamonhoc = self.mamon_entry.get()
+        tenmonhoc = self.tenmon_entry.get()
+        makhoa = self.khoa_cb.get()
+        
+        if mamonhoc.strip()=='' or tenmonhoc.strip()=='' or makhoa.strip()=='':
+            return False, "Vui lòng nhập đầy đủ thông tin"
+
+        if any(not char.isalnum() for char in mamonhoc):
+            return False, "Mã môn học không chứa ký tự đặc biệt"
+        if any(not char.isalnum() for char in tenmonhoc):
+            return False, "Tên môn học không chứa ký tự đặc biệt"
+        
+        return True,' thành công'
     def add_subject(self):
-        try:
-            mamonhoc = self.mamon_entry.get().strip()
-            tenmonhoc = self.tenmon_entry.get().strip()
-            makhoa = self.khoa_cb.get().strip()  # Get selected department from combobox
-            
-            if mamonhoc and tenmonhoc and makhoa:
-                
-                subject_bus = subjectBUS.subjectBUS()
-                result = subject_bus.add_subject(mamonhoc, tenmonhoc, makhoa)
-                if result:
-                    messagebox.showinfo("Success", "Subject added successfully")
-                    self.clear_input()
-                    self.get_subject_to_table()
-                else:
-                    messagebox.showerror("Error", "Failed to add subject")
+        mamonhoc = self.mamon_entry.get().strip()
+        tenmonhoc = self.tenmon_entry.get().strip()
+        makhoa = self.khoa_cb.get().strip()  # Get selected department from combobox
+
+        is_valid,message = self.is_valid_input()
+
+        if is_valid:
+            result = self.subjectBUS.add_subject(mamonhoc, tenmonhoc, makhoa)
+            if result:
+                self.clear_input()
+                self.get_subject_to_table()
+                messagebox.showinfo("Success", "Thêm"+message)
             else:
-                messagebox.showwarning("Warning", "Please fill all fields")
-        except Exception as e:
-            messagebox.showerror("Error", f"Add failed: {str(e)}")
+                messagebox.showerror("Error", "Thêm thất bại")
+        else: messagebox.showwarning("Warning", message)
 
     def update_subject(self):
         mamonhoc = self.mamon_entry.get()
         tenmonhoc = self.tenmon_entry.get()
         makhoa = self.khoa_cb.get()
 
-        if mamonhoc and tenmonhoc and makhoa:
-            subject_bus = subjectBUS.subjectBUS()
-            result = subject_bus.update_subject(mamonhoc, tenmonhoc, makhoa)
+        is_valid,message = self.is_valid_input()
+        if is_valid:
+            result = self.subjectBUS.update_subject(mamonhoc, tenmonhoc, makhoa)
             if result:
-                messagebox.showinfo("Success", "Subject updated successfully")
+                messagebox.showinfo("Success", "Cập nhật"+message)
                 self.clear_input()
                 self.get_subject_to_table()
                 self.mamon_entry.configure(state='normal', fg_color='#f2f2f2')
             else:
-                messagebox.showerror("Error", "Failed to update subject")
+                messagebox.showerror("Error", "Cập nhật thất bại")
         else:
-            messagebox.showwarning("Warning", "Please fill all fields")
+            messagebox.showwarning("Warning", message)
 
     def delete_subject(self):
         mamonhoc = self.mamon_entry.get()
         if mamonhoc:
-            confirm = messagebox.askyesno("Confirm", "Are you sure you want to delete this subject?")
+            confirm = messagebox.askyesno("Confirm", "Bạn có muốn xoá không?")
             if confirm:
                 try:
-                    subject_bus = subjectBUS.subjectBUS()
-                    result = subject_bus.delete_subject(mamonhoc)
+                    result = self.subjectBUS.delete_subject(mamonhoc)
                     if result:
-                        messagebox.showinfo("Success", "Subject deleted successfully")
+                        messagebox.showinfo("Success", "Xoá thành công")
                         self.clear_input()
                         self.get_subject_to_table()
                         self.mamon_entry.configure(state='normal', fg_color='#f2f2f2')
                     else:
-                        messagebox.showerror("Error", "Failed to delete subject")
+                        messagebox.showerror("Error", "Xoá thất bại")
                 except Exception as e:
                     messagebox.showerror("Error", f"Delete failed: {str(e)}")
         else:
-            messagebox.showwarning("Warning", "Please select a subject to delete")
+            messagebox.showwarning("Warning", "Không tồn tại mã sinh viên")
 
     def write_all_input(self, event):
         # Get item based on click position

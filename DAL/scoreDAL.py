@@ -45,7 +45,7 @@ class scoreDAL:
     
     def get_score_by_student_id(self,masv):
         try:
-            self.cursor.execute('''SELECT * FROM Diem WHERE masinhvien = ?''', (masv,))
+            self.cursor.execute('''SELECT * FROM Diem WHERE masv = ?''', (masv,))
             result = self.cursor.fetchall()
             return result if result else []
         except sqlite3.Error as e:
@@ -61,7 +61,7 @@ class scoreDAL:
     
     def get_score_by_student_and_subject_id(self,masv,mamonhoc):
         try:
-            self.cursor.execute('''SELECT * FROM Diem WHERE masinhvien = ? AND mamonhoc = ?''', (masv,mamonhoc))
+            self.cursor.execute('''SELECT * FROM Diem WHERE masv = ? AND mamonhoc = ?''', (masv,mamonhoc))
             return self.cursor.fetchone()
         except sqlite3.Error as e:
             print(f"Error: Can not get score by student and subject id {e}") 
@@ -79,7 +79,7 @@ class scoreDAL:
 
     def check_student_exists(self,masinhvien):
         try:
-            self.cursor.execute('''SELECT * FROM Sinhvien WHERE masinhvien = ?''', (masinhvien,))
+            self.cursor.execute('''SELECT * FROM Sinhvien WHERE masv = ?''', (masinhvien,))
             return self.cursor.fetchone() is not None
         except sqlite3.Error as e:
             print(f"Error: Can not check student exists {e}")

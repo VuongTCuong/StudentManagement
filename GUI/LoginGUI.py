@@ -39,7 +39,11 @@ class LoginGUI:
 
         # Adding widgets and create a login screen
         self.create_login_screen()
-
+        
+        if os.path.exists('user.txt'):
+            self.root.destroy()
+            Changetab.Changetab()
+            
         #run
         self.root.mainloop()
     

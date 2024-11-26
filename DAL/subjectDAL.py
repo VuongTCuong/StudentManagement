@@ -12,15 +12,15 @@ class subjectDAL:
         try:
             self.cursor.execute('''
                 create table if not exists MonHoc(
-                    mamon INTEGER PRIMARY KEY,
+                    mamon TEXT PRIMARY KEY,
                     tenmon TEXT NOT NULL,
-                    makhoa INTEGER,
+                    makhoa TEXT NOT NULL,
                     FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
                 )                                 
             ''')
             print('Created Database.')
         except sqlite3.Error as e:
-            print(f"Error: Can not create table {e}")
+            print(f"Error: Can not create table {e}")   
     
     def add_subject(self, query, params):
         try:

@@ -160,8 +160,11 @@ class StudentMgt:
             return False,"Vui lòng nhập đầy đủ thông tin"
         if not masv.isdigit():
             return False, "Mã số sinh viên chỉ nhập số"
+        if any(not char.isalnum() for char in hoten):
+            return False, "Tên sinh viên không chứa ký tự đặc biệt"
         if any(char.isdigit() for char in hoten):
             return False, "Tên sinh viên chỉ nhập ký tự"
+        
         try:
             dt_start = datetime.strptime(namsinh, '%d/%m/%Y')
         except ValueError:

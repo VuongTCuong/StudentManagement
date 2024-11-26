@@ -113,8 +113,12 @@ class DepartmentMgt:
         tenkhoa = self.tenkhoa_entry.get()
         if makhoa == '' or tenkhoa == '':
             return False,"Vui lòng nhập đầy đủ thông tin"
+        if any(not char.isalnum() for char in makhoa):
+            return False, "Mã khoa không chứa ký tự đặc biệt"
         if any(char.isdigit() for char in makhoa):
             return False,"Mã khoa chỉ nhập chữ"
+        if any(not char.isalnum() for char in makhoa):
+            return False, "Tên khoa không chứa ký tự đặc biệt"
         if any(char.isdigit() for char in tenkhoa):
             return False,"Tên khoa chỉ nhập chữ"
         return True,' thành công'

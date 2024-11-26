@@ -1,6 +1,7 @@
 from DTO import userDTO
 from DAL import userDAL
-
+from cryptography.fernet import Fernet
+import os
 class userBUS:
     def __init__(self) -> None:
         self.userDAL = userDAL.userDAL()
@@ -8,7 +9,20 @@ class userBUS:
     def login(self, userDTO):
         #call DAL method to check login
         print('calling login bus....')
-        return self.userDAL.check_user(userDTO.username, userDTO.password)
+
+
+        #temp file for saving login account
+        is_login_success = self.userDAL.check_user(userDTO.username, userDTO.password)
+
+        f = Fernet(b'LkQhEOBncRePoyysixPYu-I2Q-uDd-UZH18e8M2_HJE=') #private key
+        is_success = self.userDAL.check_user(userDTO.username, userDTO.password)
+        if is_success:
+            if not os.path.exists('user.txt'):
+                user_file = open('user.txt','wb')
+                user_file.write(f.encrypt(userDTO.username.encode()))
+                user_file.write(b'\n')
+                user_file.write(f.encrypt(userDTO.password.encode()))
+        return is_success
     
     def register(self, user, email, fullname):
         #call DAL method to check if email exists

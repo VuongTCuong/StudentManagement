@@ -134,6 +134,8 @@ class ClassMgt:
             return False,"Vui lòng nhập đầy đủ thông tin"
         if not malop.isdigit():
             return False,"Mã lớp chỉ nhập số"
+        if any(not char.isalnum() for char in tenlop):
+            return False, "Tên lớp không chứa ký tự đặc biệt"
         return True,' thành công'
         
     # check input and add class to database
