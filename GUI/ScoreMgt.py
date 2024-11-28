@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk, messagebox
 from DTO import scoreDTO
-from BUS import scoreBUS
+from BUS import scoreBUS, studentBUS, subjectBUS
 
 
 
@@ -11,24 +11,9 @@ class ScoreMgt:
         self.scoreBUS = scoreBUS.scoreBUS()
     
     def create_interactframe(self,frame):
-        mamon_lab = ctk.CTkLabel(frame,text="Mã Môn:")
-        mamon_lab.place(x=10,y=10)
-
-        self.mamon_entry = ctk.CTkEntry(
-            frame,
-            placeholder_text="Nhập Mã Môn",  
-            width=230,                    
-            height=35,                    
-            border_width=0,               
-            corner_radius=10,             
-            fg_color="#f2f2f2",           
-            text_color="#333333",         
-            placeholder_text_color="#888888" 
-        )
-        self.mamon_entry.place(x=100,y=10)
 
         masv_lab = ctk.CTkLabel(frame,text="Mã Sinh Viên:")
-        masv_lab.place(x=10,y=50)
+        masv_lab.place(x=10,y=10)
         self.masv_entry = ctk.CTkEntry(
             frame,
             placeholder_text="Nhập MSSV",  
@@ -40,10 +25,62 @@ class ScoreMgt:
             text_color="#333333",         
             placeholder_text_color="#888888" 
         )
-        self.masv_entry.place(x=100,y=50)
+        self.masv_entry.place(x=100,y=10)
+        self.masv_entry.bind('<FocusOut>',self.set_tensv_entry)
+        tensv_lab = ctk.CTkLabel(frame,text="Tên Sinh Viên:")
+        tensv_lab.place(x=10,y=50)
+
+        self.tensv_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Vui lòng nhập mã sinh viên trước",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,
+            fg_color='#cfe2f3',          
+            text_color="#333333",         
+            placeholder_text_color="#888888",
+        )
+        self.tensv_entry.place(x=100,y=50)
+        self.tensv_entry.configure(state='disabled')
+        
+
+        mamon_lab = ctk.CTkLabel(frame,text="Mã Môn:")
+        mamon_lab.place(x=10,y=90)
+        self.mamon_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập Mã Môn",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
+        self.mamon_entry.place(x=100,y=90)
+        self.mamon_entry.bind('<FocusOut>',self.set_tenmon_entry)
+
+        tenmon_lab = ctk.CTkLabel(frame,text="Tên Môn:")
+        tenmon_lab.place(x=10,y=130)
+
+        self.tenmon_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Vui lòng nhập mã môn trước",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,
+            fg_color='#cfe2f3',      
+            text_color="#333333",         
+            placeholder_text_color="#888888"
+        )
+        self.tenmon_entry.place(x=100, y=130)
+        self.tenmon_entry.configure(state='disabled')
+        
 
         diem_lab = ctk.CTkLabel(frame,text="Điểm:")
-        diem_lab.place(x=10,y=90)
+        diem_lab.place(x=10,y=170)
         self.diem_entry = ctk.CTkEntry(
             frame,
             placeholder_text="Nhập Điểm",  
@@ -55,16 +92,16 @@ class ScoreMgt:
             text_color="#333333",         
             placeholder_text_color="#888888" 
         )
-        self.diem_entry.place(x=100,y=90)
+        self.diem_entry.place(x=100,y=170)
         #button 
         add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_score)
-        add_button.place(x=10,y=160)
+        add_button.place(x=10,y=240)
         reset_button = ctk.CTkButton(frame,text='Reset',width=90,command=self.clear_input)
-        reset_button.place(x=105,y=160)
+        reset_button.place(x=105,y=240)
         update_button = ctk.CTkButton(frame,text='Cập nhật',width=90,command=self.update_score)
-        update_button.place(x=200,y=160)
+        update_button.place(x=200,y=240)
         delete_button = ctk.CTkButton(frame,text='Xoá',width=90,command=self.delete_score)
-        delete_button.place(x=295,y=160)
+        delete_button.place(x=295,y=240)
     
     def create_tableframe(self,frame):
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
@@ -111,12 +148,26 @@ class ScoreMgt:
         self.get_all_scores()
     
     def clear_input(self):
-        if(self.mamon_entry._state=='disabled'):
-            self.mamon_entry.configure(state='normal',fg_color='white')
         if(self.masv_entry._state=='disabled'):
             self.masv_entry.configure(state='normal',fg_color='white')
-        self.mamon_entry.delete(0, 'end')
         self.masv_entry.delete(0, 'end')
+        
+        self.tensv_entry.configure(state='normal')
+        self.tensv_entry.delete(0, 'end')
+        self.tensv_entry.configure(placeholder_text='Vui lòng nhập mã sinh viên trước')
+        self.tensv_entry.configure(state='disabled')
+
+        if(self.mamon_entry._state=='disabled'):
+            self.mamon_entry.configure(state='normal',fg_color='white')
+        self.mamon_entry.delete(0, 'end')
+        
+        self.tenmon_entry.configure(state='normal')
+        self.tenmon_entry.delete(0, 'end')
+        self.tenmon_entry.configure(placeholder_text='Vui lòng nhập mã môn trước')
+        self.tenmon_entry.configure(state='disabled')
+
+        if(self.diem_entry._state=='disabled'):
+            self.diem_entry.configure(state='normal',fg_color='white')
         self.diem_entry.delete(0, 'end')
     
     def is_valid_input(self):
@@ -132,7 +183,7 @@ class ScoreMgt:
             return False, "Mã sinh viên không chứa ký tự đặc biệt"
         if not masv.isdigit():
             return False,"Mã sinh viên chỉ nhập số"
-        if not diem.isdigit():
+        if not diem.replace(".","").isdigit():
             return False,'Điểm chỉ nhập số'
         return True,' thành công'
     
@@ -227,7 +278,8 @@ class ScoreMgt:
             self.diem_entry.insert(0,clicked_data[2])
             self.mamon_entry.configure(state='disabled',fg_color='#cfe2f3')
             self.masv_entry.configure(state='disabled',fg_color='#cfe2f3')
-
+        self.set_tensv_entry(event)
+        self.set_tenmon_entry(event)
 
     
     def search_score(self):
@@ -238,8 +290,25 @@ class ScoreMgt:
         self.clear_input()
         self.get_all_scores()
     
-   
-    
+    def set_tensv_entry(self,event):
+        masv = self.masv_entry.get()
+        stuBUS = studentBUS.studentBUS()
+        sinhvien_result = stuBUS.get_one_student(masv)
+        if sinhvien_result:
+            self.tensv_entry.configure(state='normal')
+            self.tensv_entry.delete(0,'end')
+            self.tensv_entry.insert(0,sinhvien_result[1])
+            self.tensv_entry.configure(state='disabled')
+
+    def set_tenmon_entry(self,event):
+        mamon = self.mamon_entry.get()
+        subBUS = subjectBUS.subjectBUS()
+        mon_result = subBUS.get_one_subject(mamon)
+        if mon_result:
+            self.tenmon_entry.configure(state='normal')
+            self.tenmon_entry.delete(0,'end')
+            self.tenmon_entry.insert(0,mon_result[1])
+            self.tenmon_entry.configure(state='disabled')
     
 
         

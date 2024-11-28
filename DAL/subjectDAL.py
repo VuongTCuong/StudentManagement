@@ -48,6 +48,14 @@ class subjectDAL:
         except sqlite3.Error as e:
             print(f"Error: Can not delete subject {e}") 
     
+    def get_one_subject(self,mamon):
+        try:
+            query = "select * from monhoc where mamonhoc='{0}'".format(mamon)
+            self.cursor.execute(query)
+            return self.cursor.fetchone()
+        except sqlite3.Error as e:
+            print(f"Error: Can not get all subjects {e}")
+
     def get_all_subjects(self):
         try:
             self.cursor.execute('''

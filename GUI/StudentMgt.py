@@ -1,7 +1,8 @@
 import customtkinter as ctk
+from customtkinter import filedialog
 from tkinter import ttk,messagebox
 from datetime import datetime
-from BUS import classBUS,studentBUS
+from BUS import classBUS,studentBUS,departmentBUS
 from DTO import studentDTO
 from RegisterGUI import RegisterGUI
 class StudentMgt:
@@ -81,26 +82,39 @@ class StudentMgt:
         )
         self.email_entry.place(x=100,y=170)
 
-        malop_lab = ctk.CTkLabel(frame,text="Lớp:")
-        malop_lab.place(x=10,y=210)
+        khoa_lab = ctk.CTkLabel(frame,text='Khoa:')
+        khoa_lab.place(x=10,y=210)
 
-        #Get all class
-        clas_BUS = classBUS.classBUS()
-        all_class = clas_BUS.get_all_class()
-        tenlop = [str(tenlop[1]) for tenlop in all_class] 
-        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=tenlop,state='readonly')
-        self.malop_cb.place(x=100,y=210)
+        depart_BUS = departmentBUS.departmentBUS()
+        all_depart = depart_BUS.get_all_department()
+        ten_depart = [str(tenkhoa[0]) for tenkhoa in all_depart]
+        self.khoa_cb = ctk.CTkComboBox(frame,width=230,values=ten_depart,state='readonly',command=self.get_tenlop_bykhoa)
+        self.khoa_cb.place(x=100,y=210)
+
+        malop_lab = ctk.CTkLabel(frame,text="Lớp:")
+        malop_lab.place(x=10,y=250)
+
+        
+        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=["Vui lòng chọn khoa trước"],state='readonly')
+        self.malop_cb.set('Vui lòng chọn khoa trước')
+        self.malop_cb.place(x=100,y=250)
 
         #button 
         add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_student)
-        add_button.place(x=10,y=280)
+        add_button.place(x=10,y=320)
+        
         reset_button = ctk.CTkButton(frame,text='Reset',width=90,command=self.clear_input)
-        reset_button.place(x=105,y=280)
+        reset_button.place(x=105,y=320)
+        
         update_button = ctk.CTkButton(frame,text='Cập nhật',width=90,command=self.update_student)
-        update_button.place(x=200,y=280)
+        update_button.place(x=200,y=320)
+        
         delete_button = ctk.CTkButton(frame,text='Xoá',width=90,command=self.delete_student)
-        delete_button.place(x=295,y=280)
+        delete_button.place(x=295,y=320)
 
+        import_button = ctk.CTkButton(frame,text='Import CSV File',width=90,command=self.import_csv)
+        import_button.place(x=10,y=370)
+    
     def create_tableframe(self,frame):
         #student table
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
@@ -128,21 +142,23 @@ class StudentMgt:
         scrollbar.place(x=10,y=50)
 
         self.table = ttk.Treeview(scrollbar,height=23)
-        self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email', 'Mã Lớp')
+        self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email','Mã Khoa' ,'Mã Lớp')
         self.table.heading('Mã SV', text='Mã SV')
         self.table.heading('Họ Tên', text='Họ Tên')
         self.table.heading('Năm Sinh', text='Năm Sinh')
         self.table.heading('Giới Tính', text='Giới Tính')
         self.table.heading('Email', text='Email')
+        self.table.heading('Mã Khoa', text='Mã Khoa')
         self.table.heading('Mã Lớp', text='Mã Lớp')
 
         # Adjust column widths to fit within table_frame
         self.table.column("#0", width=0, stretch=ctk.NO)
-        self.table.column('Mã SV', width=100)
-        self.table.column('Họ Tên', width=200)
+        self.table.column('Mã SV', width=80)
+        self.table.column('Họ Tên', width=140)
         self.table.column('Năm Sinh', width=100)
-        self.table.column('Giới Tính', width=100)
+        self.table.column('Giới Tính', width=50)
         self.table.column('Email', width=150)
+        self.table.column('Mã Khoa', width=60)
         self.table.column('Mã Lớp', width=100)
         self.table.pack(side='left')
         self.table.bind('<Button-1>',self.write_all_input)
@@ -160,7 +176,7 @@ class StudentMgt:
             return False,"Vui lòng nhập đầy đủ thông tin"
         if not masv.isdigit():
             return False, "Mã số sinh viên chỉ nhập số"
-        if any(not char.isalnum() for char in hoten):
+        if any(not char.isalnum() for char in hoten.replace(" ","")):
             return False, "Tên sinh viên không chứa ký tự đặc biệt"
         if any(char.isdigit() for char in hoten):
             return False, "Tên sinh viên chỉ nhập ký tự"
@@ -172,6 +188,8 @@ class StudentMgt:
         if not RegisterGUI.email_is_valid(RegisterGUI,email):
             return False, "Email sinh viên không hợp lệ"
         
+        if self.studentBUS.get_one_student(masv):
+            return False, "Mã sinh viên đã tồn tại"
         return True,' thành công'
     
 
@@ -181,12 +199,13 @@ class StudentMgt:
         namsinh = self.namsinh_entry.get()
         gioitinh = self.gioitinh_cb.get()
         email = self.email_entry.get()
+        makhoa = self.malop_cb.get()
         malop = self.malop_cb.get()
 
         #thêm vào bảng cũng như database
         is_valid,message = self.is_valid_input()
         if is_valid:
-            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,malop)
+            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,makhoa,malop)
             if(self.studentBUS.add_student(student_obj)):
                 self.clear_input()
                 self.get_student_to_table()
@@ -200,10 +219,11 @@ class StudentMgt:
         namsinh = self.namsinh_entry.get()
         gioitinh = self.gioitinh_cb.get()
         email = self.email_entry.get()
+        makhoa = self.khoa_cb.get()
         malop = self.malop_cb.get()
         is_valid,message = self.is_valid_input()
         if is_valid:
-            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,malop)
+            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,makhoa,malop)
             if(self.studentBUS.update_student(student_obj)):
                 self.clear_input()
                 self.get_student_to_table()
@@ -251,7 +271,12 @@ class StudentMgt:
             self.namsinh_entry.insert(0, clicked_data[2])
             self.gioitinh_cb.set(clicked_data[3])
             self.email_entry.insert(0, clicked_data[4])
-            self.malop_cb.set(clicked_data[5])
+            self.khoa_cb.set(clicked_data[5])
+
+            class_BUS = classBUS.classBUS()
+            lop_theokhoa = class_BUS.get_class_by_depart(self.khoa_cb.get())
+            self.malop_cb.set(clicked_data[6])
+            self.malop_cb.configure(values=[lop[1] for lop in lop_theokhoa])
 
             self.msv_entry.configure(state='disabled',fg_color='#cfe2f3')
 
@@ -263,4 +288,19 @@ class StudentMgt:
         self.namsinh_entry.delete(0, 'end')
         self.gioitinh_cb.set('')
         self.email_entry.delete(0, 'end')
-        self.malop_cb.set('')
+        self.khoa_cb.set('')
+        self.malop_cb.set('Vui lòng chọn khoa trước')
+
+    def get_tenlop_bykhoa(self,tenkhoa):
+        class_BUS = classBUS.classBUS()
+        lop_theokhoa = class_BUS.get_class_by_depart(tenkhoa)
+    
+        self.malop_cb.set("")
+        self.malop_cb.configure(values=[lop[1] for lop in lop_theokhoa])
+    
+    def import_csv(self):
+        current_file = filedialog.askopenfile()
+        current_file_direct = current_file.name
+        self.studentBUS.import_csv(current_file_direct)
+        self.get_student_to_table()
+

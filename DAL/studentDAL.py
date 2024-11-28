@@ -25,18 +25,26 @@ class studentDAL:
         except sqlite3.Error as e:
             print(f"Error: Can not create table {e}")
     
-    def add_student(self,masv,tensv,namsinh,gioitinh,email,malop):
+    def add_student(self,masv,tensv,namsinh,gioitinh,email,makhoa,malop):
         try:
             self.cursor.execute('''
-                INSERT INTO SinhVien (masv, tensv, namsinh, gioitinh, email, malop)
+                INSERT INTO SinhVien (masv, tensv, namsinh, gioitinh, email, makhoa, malop)
                 VALUES (?, ?, ?, ?, ?, ?)
-            ''', (masv, tensv, namsinh, gioitinh, email, malop))
+            ''', (masv, tensv, namsinh, gioitinh, email, makhoa, malop))
             self.conn.commit()
             return True
         except sqlite3.Error as e:
             print(e)
         return False
 
+    def get_one_student(self,masv):
+        try:   
+            query = 'select * from Sinhvien where masv='+masv
+            self.cursor.execute(query)
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(e)
+        return self.cursor.fetchone()
     def get_all_student(self):
         try:
             self.cursor.execute('select * from Sinhvien')
@@ -54,14 +62,14 @@ class studentDAL:
         except sqlite3.Error as e:
             print(e)
         return False
-    def update_student(self,masv,tensv,namsinh,gioitinh,email,malop):
+    def update_student(self,masv,tensv,namsinh,gioitinh,email,makhoa,malop):
         if self.is_exist_student(masv):
                 try:
                     self.cursor.execute('''
                         UPDATE SinhVien 
-                        SET tensv = ?, namsinh = ?, gioitinh = ?, email = ?, malop = ?
+                        SET tensv = ?, namsinh = ?, gioitinh = ?, email = ?, makhoa = ?, malop = ?
                         WHERE masv = ?
-                    ''', (tensv, namsinh, gioitinh, email, malop, masv))
+                    ''', (tensv, namsinh, gioitinh, email, makhoa, malop, masv))
                     self.conn.commit()
                     return True
                 except sqlite3.Error as e:

@@ -163,7 +163,7 @@ class SubjectMgt:
 
         if any(not char.isalnum() for char in mamonhoc):
             return False, "Mã môn học không chứa ký tự đặc biệt"
-        if any(not char.isalnum() for char in tenmonhoc):
+        if any(not char.isalnum() for char in tenmonhoc.replace(" ","")):
             return False, "Tên môn học không chứa ký tự đặc biệt"
         
         return True,' thành công'

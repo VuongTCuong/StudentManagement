@@ -10,7 +10,12 @@ class classBUS:
         tenlop = tenlop.strip()
         makhoa = makhoa.strip()
         return self.classDAL.add_class(malop, tenlop, makhoa)
-
+    
+    def get_class_by_depart(self,tenkhoa):
+        return self.classDAL.get_class_by_depart(tenkhoa)
+    
+    def get_one_class(self,malop):
+        return self.classDAL.get_one_class(malop)
     def get_all_class(self):
         return self.classDAL.get_all_class()
     

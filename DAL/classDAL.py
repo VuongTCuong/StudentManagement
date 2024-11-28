@@ -36,6 +36,25 @@ class classDAL:
             print(f"Error: Can not Add Lớp {e}")
             return False
         return True
+    def get_class_by_depart(self,makhoa):
+        try:
+            query = "select * from Lop where makhoa ='{0}'".format(makhoa)
+            self.cursor.execute(query)
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"Error: {e}")
+        result = self.cursor.fetchall()
+        return result
+    
+    def get_one_class(self,malop):
+        try:
+            query = "select * from Lop where malop ={0}".format(malop)
+            self.cursor.execute(query)
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"Error: {e}")
+        result = self.cursor.fetchone()
+        return result
     
     def get_all_class(self):
         try:

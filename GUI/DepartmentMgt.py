@@ -117,7 +117,7 @@ class DepartmentMgt:
             return False, "Mã khoa không chứa ký tự đặc biệt"
         if any(char.isdigit() for char in makhoa):
             return False,"Mã khoa chỉ nhập chữ"
-        if any(not char.isalnum() for char in makhoa):
+        if any(not char.isalnum() for char in makhoa.replace(" ","")):
             return False, "Tên khoa không chứa ký tự đặc biệt"
         if any(char.isdigit() for char in tenkhoa):
             return False,"Tên khoa chỉ nhập chữ"

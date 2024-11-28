@@ -16,6 +16,9 @@ class subjectBUS:
             print(f"Error in add_subject: {str(e)}")
             return False
     
+    def get_one_subject(self,mamon):
+        return self.subjectDAL.get_one_subject(mamon)
+
     def get_all_subjects(self):
         return self.subjectDAL.get_all_subjects()
     
