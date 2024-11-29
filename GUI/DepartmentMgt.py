@@ -140,7 +140,7 @@ class DepartmentMgt:
         self.table.delete(*self.table.get_children())
         result = self.departmentBUS.get_all_department()
         for i in result:
-            if search_ID.lower() in str(i[0]):
+            if search_ID.lower() in str(i[0]).lower():
                 self.table.insert('','end',values=i)
 
     def update_department(self):

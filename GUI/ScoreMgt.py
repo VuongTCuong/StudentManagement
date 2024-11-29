@@ -109,7 +109,7 @@ class ScoreMgt:
         # self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
         self.search_entry = ctk.CTkEntry(
             frame,
-            placeholder_text="Nhập mã khoa để tìm kiếm",  
+            placeholder_text="Nhập mã sinh viên để tìm kiếm",  
             width=230,                    
             height=35,                    
             border_width=0,               
@@ -119,7 +119,8 @@ class ScoreMgt:
             placeholder_text_color="#888888" 
         )
         self.search_entry.place(x=100,y=10)
-        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_score)
+
+        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.get_score_by_IDorName)
         search_button.place(x=350,y=10)
         reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.reset_search)
         reset_button.place(x=460,y=10)
@@ -260,10 +261,15 @@ class ScoreMgt:
             for i in result:
                 self.table.insert('', 'end', values=i)
     
-    def get_score_by_id(self,mamon,masv):
-        result = self.scoreBUS.get_score_by_student_and_subject_id(masv,mamon)
+    def get_score_by_IDorName(self):
+        search_text = self.search_entry.get()
+        result = self.scoreBUS.get_all_scores()
+        
+        self.table.delete(*self.table.get_children())
+
         for i in result:
-            self.table.insert('', 'end', values=i)  
+            if search_text.lower() in str(i[0]) or search_text.lower() in str(i[1]).lower():
+                self.table.insert('', 'end', values=i)  
 
     def write_all_input(self,event):
         clicked_item = self.table.identify('item',event.x,event.y)
@@ -282,9 +288,7 @@ class ScoreMgt:
         self.set_tenmon_entry(event)
 
     
-    def search_score(self):
-        mamon = self.search_entry.get()
-        self.get_score_by_id(mamon)
+
 
     def reset_search(self):
         self.clear_input()

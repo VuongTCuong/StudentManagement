@@ -77,10 +77,9 @@ class SubjectMgt:
     def create_tableframe(self,frame):
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
         search_lab.place(x=10,y=10)
-        # self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã khoa để tìm kiếm')
         self.search_entry = ctk.CTkEntry(
             frame,
-            placeholder_text="Nhập mã Môn để tìm kiếm",  
+            placeholder_text="Nhập mã môn hoặc tên môn để tìm kiếm",  
             width=230,                    
             height=35,                    
             border_width=0,               
@@ -90,10 +89,18 @@ class SubjectMgt:
             placeholder_text_color="#888888" 
         )
         self.search_entry.place(x=100,y=10)
-        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm')
-        search_button.place(x=350,y=10)
-        reset_button = ctk.CTkButton(frame,width=100,text='Reset')
-        reset_button.place(x=460,y=10)
+
+        depart_BUS = departmentBUS.departmentBUS()
+        all_depart = depart_BUS.get_all_department()
+        ten_depart = ["Khoa"]+[str(tenkhoa[0]) for tenkhoa in all_depart]
+        self.khoa_cb_filter = ctk.CTkComboBox(frame,width=90,values=ten_depart,state='readonly',command=self.filter_by_khoa)
+        self.khoa_cb_filter.place(x=350,y=10)
+        self.khoa_cb_filter.set("Khoa")
+
+        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_IDorName)
+        search_button.place(x=460,y=10)
+        reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.reset_table)
+        reset_button.place(x=580,y=10)
 
         #Add scrollbar
         scrollbar = ctk.CTkScrollableFrame(frame,width=600,height=450)
@@ -138,14 +145,19 @@ class SubjectMgt:
             print("Error loading subjects:", str(e))  # Debug print
             messagebox.showerror("Error", f"Failed to load subjects: {str(e)}")
 
-    def search_by_ID(self):
+    def search_by_IDorName(self):
         search_value = self.search_entry.get()
         if search_value:
             self.table.delete(*self.table.get_children())
             subject_bus = subjectBUS.subjectBUS()
-            subjects = subject_bus.search_subject(search_value)
-            for subject in subjects:
-                self.table.insert('', 'end', values=subject)
+            filter_khoa = self.khoa_cb_filter.get()
+            if filter_khoa=='Khoa':
+                subjects = subject_bus.get_all_subjects()
+            else:
+                subjects = subject_bus.get_subject_by_department_id(filter_khoa)
+            for i in subjects:
+                if search_value.lower() in str(i[0]) or search_value.lower() in i[1].lower():
+                    self.table.insert('', 'end', values=i)
         else:
             messagebox.showwarning("Warning", "Please enter a subject ID to search")
 
@@ -257,4 +269,14 @@ class SubjectMgt:
             self.tenkhoa_entry.insert(0, department[1])
             self.tenkhoa_entry.configure(state='disabled')
     
-    
+    def filter_by_khoa(self,selected_khoa):
+        search_text = self.search_entry.get()
+        
+        self.table.delete(*self.table.get_children())
+        if selected_khoa=='Khoa':
+            filter_result = self.subjectBUS.get_all_subjects()
+        else:
+            filter_result = self.subjectBUS.get_subject_by_department_id(selected_khoa)
+        for i in filter_result:
+            if search_text.lower() in str(i[0]) or search_text.lower() in i[1].lower():
+                self.table.insert('','end',value=i)
