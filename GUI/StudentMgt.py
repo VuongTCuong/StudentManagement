@@ -88,16 +88,16 @@ class StudentMgt:
         depart_BUS = departmentBUS.departmentBUS()
         all_depart = depart_BUS.get_all_department()
         ten_depart = [str(tenkhoa[0]) for tenkhoa in all_depart]
-        self.khoa_cb = ctk.CTkComboBox(frame,width=230,values=ten_depart,state='readonly',command=self.get_tenlop_bykhoa)
+        self.khoa_cb = ctk.CTkComboBox(frame,width=230,values=ten_depart,state='readonly',command=self.set_tenlop_bykhoa)
         self.khoa_cb.place(x=100,y=210)
 
-        malop_lab = ctk.CTkLabel(frame,text="Lớp:")
-        malop_lab.place(x=10,y=250)
+        tenlop_lab = ctk.CTkLabel(frame,text="Lớp:")
+        tenlop_lab.place(x=10,y=250)
 
         
-        self.malop_cb = ctk.CTkComboBox(frame,width=230,values=["Vui lòng chọn khoa trước"],state='readonly')
-        self.malop_cb.set('Vui lòng chọn khoa trước')
-        self.malop_cb.place(x=100,y=250)
+        self.tenlop_cb = ctk.CTkComboBox(frame,width=230,values=["Vui lòng chọn khoa trước"],state='readonly')
+        self.tenlop_cb.set('Vui lòng chọn khoa trước')
+        self.tenlop_cb.place(x=100,y=250)
 
         #button 
         add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_student)
@@ -132,24 +132,39 @@ class StudentMgt:
             placeholder_text_color="#888888" 
         )
         self.search_entry.place(x=100,y=10)
+
+        depart_BUS = departmentBUS.departmentBUS()
+        all_depart = depart_BUS.get_all_department()
+        ten_depart = ["Khoa"]+[str(tenkhoa[0]) for tenkhoa in all_depart]
+        self.khoa_cb_filter = ctk.CTkComboBox(frame,width=90,values=ten_depart,state='readonly',command=self.filter_by_khoa)
+        self.khoa_cb_filter.place(x=350,y=10)
+        self.khoa_cb_filter.set("Khoa")
+
+        class_BUS = classBUS.classBUS()
+        all_class = class_BUS.get_all_class()
+        ten_class = ["Lớp"]+[str(tenlop[1]) for tenlop in all_class]
+        self.lop_cb_filter = ctk.CTkComboBox(frame,width=120,values=ten_class,state='readonly',command=self.filter_by_lop)
+        self.lop_cb_filter.place(x=450,y=10)
+        self.lop_cb_filter.set("Lớp")
+
         search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_IDorName)
-        search_button.place(x=350,y=10)
-        reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_student_to_table)
-        reset_button.place(x=460,y=10)
+        search_button.place(x=590,y=10)
+        reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.reset_filter)
+        reset_button.place(x=700,y=10)
 
         #Add scrollbar
         scrollbar = ctk.CTkScrollableFrame(frame,width=750,height=450)
         scrollbar.place(x=10,y=50)
 
         self.table = ttk.Treeview(scrollbar,height=23)
-        self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email','Mã Khoa' ,'Mã Lớp')
+        self.table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email','Mã Khoa' ,'Tên Lớp')
         self.table.heading('Mã SV', text='Mã SV')
         self.table.heading('Họ Tên', text='Họ Tên')
         self.table.heading('Năm Sinh', text='Năm Sinh')
         self.table.heading('Giới Tính', text='Giới Tính')
         self.table.heading('Email', text='Email')
         self.table.heading('Mã Khoa', text='Mã Khoa')
-        self.table.heading('Mã Lớp', text='Mã Lớp')
+        self.table.heading('Tên Lớp', text='Tên Lớp')
 
         # Adjust column widths to fit within table_frame
         self.table.column("#0", width=0, stretch=ctk.NO)
@@ -159,7 +174,7 @@ class StudentMgt:
         self.table.column('Giới Tính', width=50)
         self.table.column('Email', width=150)
         self.table.column('Mã Khoa', width=60)
-        self.table.column('Mã Lớp', width=100)
+        self.table.column('Tên Lớp', width=100)
         self.table.pack(side='left')
         self.table.bind('<Button-1>',self.write_all_input)
 
@@ -171,8 +186,8 @@ class StudentMgt:
         namsinh = self.namsinh_entry.get()
         gioitinh = self.gioitinh_cb.get()
         email = self.email_entry.get()
-        malop = self.malop_cb.get()
-        if masv=='' or hoten =='' or namsinh=='' or gioitinh=='' or email=='' or malop=='':
+        tenlop = self.tenlop_cb.get()
+        if masv=='' or hoten =='' or namsinh=='' or gioitinh=='' or email=='' or tenlop=='':
             return False,"Vui lòng nhập đầy đủ thông tin"
         if not masv.isdigit():
             return False, "Mã số sinh viên chỉ nhập số"
@@ -188,8 +203,7 @@ class StudentMgt:
         if not RegisterGUI.email_is_valid(RegisterGUI,email):
             return False, "Email sinh viên không hợp lệ"
         
-        if self.studentBUS.get_one_student(masv):
-            return False, "Mã sinh viên đã tồn tại"
+        
         return True,' thành công'
     
 
@@ -199,18 +213,20 @@ class StudentMgt:
         namsinh = self.namsinh_entry.get()
         gioitinh = self.gioitinh_cb.get()
         email = self.email_entry.get()
-        makhoa = self.malop_cb.get()
-        malop = self.malop_cb.get()
-
+        makhoa = self.khoa_cb.get()
+        tenlop = self.tenlop_cb.get()
+        
         #thêm vào bảng cũng như database
         is_valid,message = self.is_valid_input()
+     
         if is_valid:
-            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,makhoa,malop)
-            if(self.studentBUS.add_student(student_obj)):
-                self.clear_input()
-                self.get_student_to_table()
-                messagebox.showinfo('Success','Thêm'+message)
-            
+            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,makhoa,tenlop)
+            if not self.studentBUS.get_one_student(masv):
+                if(self.studentBUS.add_student(student_obj)):
+                    self.clear_input()
+                    self.get_student_to_table()
+                    messagebox.showinfo('Success','Thêm'+message)
+            else: messagebox.showerror('Error','Mã sinh viên đã tồn tại')
         else: messagebox.showerror('Error',message)
 
     def update_student(self):
@@ -220,10 +236,10 @@ class StudentMgt:
         gioitinh = self.gioitinh_cb.get()
         email = self.email_entry.get()
         makhoa = self.khoa_cb.get()
-        malop = self.malop_cb.get()
+        tenlop = self.tenlop_cb.get()
         is_valid,message = self.is_valid_input()
         if is_valid:
-            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,makhoa,malop)
+            student_obj  = studentDTO.studentDTO(masv,hoten,namsinh,gioitinh,email,makhoa,tenlop)
             if(self.studentBUS.update_student(student_obj)):
                 self.clear_input()
                 self.get_student_to_table()
@@ -243,7 +259,9 @@ class StudentMgt:
     def search_by_IDorName(self):
         search_text = self.search_entry.get()
         self.table.delete(*self.table.get_children())
-        result = self.studentBUS.get_all_student()
+        makhoa_filter = self.khoa_cb_filter.get()
+        tenlop_filter = self.lop_cb_filter.get()
+        result = self.studentBUS.filterStudent(makhoa_filter,tenlop_filter)
         for i in result:
             if search_text.lower() in str(i[0]) or search_text.lower() in i[1].lower():
                 self.table.insert('','end',values=i)
@@ -275,8 +293,8 @@ class StudentMgt:
 
             class_BUS = classBUS.classBUS()
             lop_theokhoa = class_BUS.get_class_by_depart(self.khoa_cb.get())
-            self.malop_cb.set(clicked_data[6])
-            self.malop_cb.configure(values=[lop[1] for lop in lop_theokhoa])
+            self.tenlop_cb.set(clicked_data[6])
+            self.tenlop_cb.configure(values=[lop[1] for lop in lop_theokhoa])
 
             self.msv_entry.configure(state='disabled',fg_color='#cfe2f3')
 
@@ -289,18 +307,51 @@ class StudentMgt:
         self.gioitinh_cb.set('')
         self.email_entry.delete(0, 'end')
         self.khoa_cb.set('')
-        self.malop_cb.set('Vui lòng chọn khoa trước')
+        self.tenlop_cb.set('Vui lòng chọn khoa trước')
 
     def get_tenlop_bykhoa(self,tenkhoa):
         class_BUS = classBUS.classBUS()
         lop_theokhoa = class_BUS.get_class_by_depart(tenkhoa)
-    
-        self.malop_cb.set("")
-        self.malop_cb.configure(values=[lop[1] for lop in lop_theokhoa])
-    
+        return [lop[1] for lop in lop_theokhoa]
+        
+
+    def set_tenlop_bykhoa(self,tenkhoa):
+        self.tenlop_cb.set("")
+        self.tenlop_cb.configure(values=self.get_tenlop_bykhoa(tenkhoa))
+
     def import_csv(self):
         current_file = filedialog.askopenfile()
         current_file_direct = current_file.name
         self.studentBUS.import_csv(current_file_direct)
         self.get_student_to_table()
 
+    def filter_by_khoa(self,selected_khoa):
+        filter_result = self.studentBUS.filterStudent(selected_khoa,"Lớp")
+
+        self.lop_cb_filter.set('Lớp')
+        self.lop_cb_filter.configure(values=['Lớp']+self.get_tenlop_bykhoa(selected_khoa))
+
+        self.table.delete(*self.table.get_children())
+
+        search_text = self.search_entry.get()
+        for i in filter_result:
+            if search_text.lower() in str(i[0]) or search_text.lower() in i[1].lower():
+                self.table.insert('','end',value=i)
+    
+    def filter_by_lop(self,selected_lop):
+        selected_khoa = self.khoa_cb_filter.get()
+        filter_result = self.studentBUS.filterStudent(selected_khoa,selected_lop)
+
+        self.table.delete(*self.table.get_children())
+
+        search_text = self.search_entry.get()
+        for i in filter_result:
+            if search_text.lower() in str(i[0]) or search_text.lower() in i[1].lower():
+                self.table.insert('','end',value=i)
+
+    def reset_filter(self):
+        self.search_entry.delete(0,'end')
+        self.khoa_cb_filter.set('Khoa')
+        self.lop_cb_filter.set('Lớp')
+        self.lop_cb_filter.configure(values=['Lớp'])
+        self.get_student_to_table()

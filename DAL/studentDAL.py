@@ -17,20 +17,22 @@ class studentDAL:
                     namsinh INTEGER NOT NULL,
                     gioitinh TEXT NOT NULL,
                     email TEXT NOT NULL UNIQUE,
-                    malop INTEGER,
-                    FOREIGN KEY(malop) REFERENCES Lop(malop)
+                    makhoa TEXT NOT NULL,
+                    tenlop TEXT,
+                    FOREIGN KEY(tenlop) REFERENCES Lop(tenlop)
+                    FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
                 )                                 
             ''')
             print('Created Database.')
         except sqlite3.Error as e:
             print(f"Error: Can not create table {e}")
     
-    def add_student(self,masv,tensv,namsinh,gioitinh,email,makhoa,malop):
+    def add_student(self,masv,tensv,namsinh,gioitinh,email,makhoa,tenlop):
         try:
             self.cursor.execute('''
-                INSERT INTO SinhVien (masv, tensv, namsinh, gioitinh, email, makhoa, malop)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (masv, tensv, namsinh, gioitinh, email, makhoa, malop))
+                INSERT INTO SinhVien (masv, tensv, namsinh, gioitinh, email, makhoa, tenlop)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (masv, tensv, namsinh, gioitinh, email, makhoa, tenlop))
             self.conn.commit()
             return True
         except sqlite3.Error as e:
@@ -62,14 +64,14 @@ class studentDAL:
         except sqlite3.Error as e:
             print(e)
         return False
-    def update_student(self,masv,tensv,namsinh,gioitinh,email,makhoa,malop):
+    def update_student(self,masv,tensv,namsinh,gioitinh,email,makhoa,tenlop):
         if self.is_exist_student(masv):
                 try:
                     self.cursor.execute('''
                         UPDATE SinhVien 
-                        SET tensv = ?, namsinh = ?, gioitinh = ?, email = ?, makhoa = ?, malop = ?
+                        SET tensv = ?, namsinh = ?, gioitinh = ?, email = ?, makhoa = ?, tenlop = ?
                         WHERE masv = ?
-                    ''', (tensv, namsinh, gioitinh, email, makhoa, malop, masv))
+                    ''', (tensv, namsinh, gioitinh, email, makhoa, tenlop, masv))
                     self.conn.commit()
                     return True
                 except sqlite3.Error as e:
@@ -94,3 +96,21 @@ class studentDAL:
             self.conn.close()
         except sqlite3.Error as e:
             print(f"Error disconnecting database {e}")
+
+
+    def filterStudent(self,makhoa,tenlop):
+        query = 'select * from SinhVien'
+        if makhoa!='' and tenlop=='':
+            query+= " where makhoa='{0}'".format(makhoa)
+
+        if makhoa=='' and tenlop!='':
+            query+= " where tenlop='{0}'".format(tenlop)
+
+        if makhoa!='' and tenlop!='':
+            query+= " where makhoa='{0}' and tenlop='{1}'".format(makhoa,tenlop)
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(e)
+        return self.cursor.fetchall()

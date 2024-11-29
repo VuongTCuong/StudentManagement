@@ -89,7 +89,7 @@ class ClassMgt:
         # self.search_entry = ctk.CTkEntry(frame,width=230,placeholder_text='Nhập mã lớp để tìm kiếm')
         self.search_entry = ctk.CTkEntry(
             frame,
-            placeholder_text="Nhập Mã Lớp để tiềm kiếm",  
+            placeholder_text="Nhập Tên lớp để tìm kiếm",  
             width=230,                    
             height=35,                    
             border_width=0,               
@@ -99,10 +99,19 @@ class ClassMgt:
             placeholder_text_color="#888888" 
         )
         self.search_entry.place(x=100,y=10)
-        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_ID)
-        search_button.place(x=350,y=10)
+
+        depart_BUS = departmentBUS.departmentBUS()
+        all_depart = depart_BUS.get_all_department()
+        ten_depart = ["Khoa"]+[str(tenkhoa[0]) for tenkhoa in all_depart]
+        self.khoa_cb_filter = ctk.CTkComboBox(frame,width=90,values=ten_depart,state='readonly',command=self.filter_by_khoa)
+        self.khoa_cb_filter.place(x=350,y=10)
+        self.khoa_cb_filter.set("Khoa")
+
+
+        search_button = ctk.CTkButton(frame,width=100,text='Tìm kiếm',command=self.search_by_ten)
+        search_button.place(x=460,y=10)
         reset_button = ctk.CTkButton(frame,width=100,text='Reset',command=self.get_class_to_table)
-        reset_button.place(x=460,y=10)
+        reset_button.place(x=580,y=10)
 
         #Add scrollbar
         scrollbar = ctk.CTkScrollableFrame(frame,width=700,height=450)
@@ -206,16 +215,26 @@ class ClassMgt:
     # get all class to table
     def get_class_to_table(self):
         self.table.delete(*self.table.get_children())
+
+        #reset filter
+        self.search_entry.delete(0,'end')
+        self.khoa_cb_filter.set('Khoa')
+
         result = self.classBUS.get_all_class()
         for i in result:
             self.table.insert('','end',value=i)
         
-    def search_by_ID(self):
+    def search_by_ten(self):
         search_text = self.search_entry.get()
         self.table.delete(*self.table.get_children())
-        result = self.classBUS.get_all_class()
+
+        khoa = self.khoa_cb_filter.get()
+        if khoa!='Khoa':
+            result = self.classBUS.get_class_by_depart(self.khoa_cb_filter.get())
+        else:
+            result = self.classBUS.get_all_class()
         for i in result:
-            if search_text.lower() in str(i[0]):
+            if search_text.lower() in str(i[1]).lower():
                 self.table.insert('','end',values=i)
 
     def write_all_input(self,event): #event is required when using bind 
@@ -252,6 +271,18 @@ class ClassMgt:
             self.tenkhoa_entry.delete(0, 'end')
             self.tenkhoa_entry.insert(0, department[1])
             self.tenkhoa_entry.configure(state='disabled')
+
+    def filter_by_khoa(self,selected_khoa):
+        if selected_khoa != 'Khoa':
+            filter_result = self.classBUS.get_class_by_depart(selected_khoa)
+        else:
+            filter_result = self.classBUS.get_all_class()
+        self.table.delete(*self.table.get_children())
+
+        search_text = self.search_entry.get()
+        for i in filter_result:
+            if search_text.lower() in i[1].lower():
+                self.table.insert('','end',value=i)
         
             
 

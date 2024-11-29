@@ -16,8 +16,8 @@ create table if not exists SinhVien(
     gioitinh TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     makhoa TEXT NOT NULL,
-    malop INTEGER,
-    FOREIGN KEY(malop) REFERENCES Lop(malop)
+    tenlop TEXT,
+    FOREIGN KEY(tenlop) REFERENCES Lop(tenlop)
     FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
 )
 create table MonHoc(

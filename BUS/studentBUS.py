@@ -41,3 +41,10 @@ class studentBUS:
             data_str = list(map(str,data))
             print(data_str)
             self.studentDAL.add_student(data_str[0],data_str[1],data_str[2],data_str[3],data_str[4],data_str[5],data_str[6])
+
+    def filterStudent(self,makhoa,tenlop):
+        if makhoa =='Khoa':
+            makhoa = ''
+        if tenlop =='Lớp':
+            tenlop = ''
+        return self.studentDAL.filterStudent(makhoa,tenlop)
