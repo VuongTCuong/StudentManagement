@@ -21,16 +21,29 @@ create table if not exists SinhVien(
     FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
 )
 create table MonHoc(
-    mamonhoc TEXT,
+    mamonhoc INTEGER,
     tenmonhoc TEXT,
     makhoa TEXT,
+    sotc INTEGER,
     FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
+)
 create table Diem(
-    mamonhoc TEXT,
+    mamonhoc INTEGER,
     masv INTEGER,
-    diem REAL,
+    diemgk REAL,
+    diemthi REAL,
     FOREIGN KEY(mamonhoc) REFERENCES MonHoc(mamonhoc),
     FOREIGN KEY(masv) REFERENCES SinhVien(masv),
     PRIMARY KEY(mamonhoc,masv)
+)
+create table MoLop(
+    mamolop INT primary key,
+    mamon INTEGER,
+    hocki TEXT,
+    namhoc TEXT,
+    giangvien TEXT,
+    siso INT,
+    trangthai TEXT,
+    FOREIGN KEY(mamon) REFERENCES Monhoc(mamonhoc)
 )
     

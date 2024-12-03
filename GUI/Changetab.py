@@ -1,9 +1,6 @@
 import customtkinter as ctk
-import StudentMgt
-import ClassMgt
-import DepartmentMgt
-import ScoreMgt
-import SubjectMgt
+import StudentMgt, ClassMgt, DepartmentMgt, ScoreMgt, SubjectMgt, OpenClass
+
 import sys
 from tkinter import messagebox
 import LoginGUI
@@ -66,6 +63,8 @@ class Changetab:
         mon_tab_button = ctk.CTkButton(self.top_frame, text='Môn học',width=80,command=self.changeto_subject_tab)
         mon_tab_button.place(x=345, y=y_center)
 
+        open_class_button = ctk.CTkButton(self.top_frame, text='Mở lớp',width=80,command=self.changeto_openclass_tab)
+        open_class_button.place(x=430, y=y_center)
         #current user label
         if os.path.exists('user.txt'):
             f = Fernet(b'LkQhEOBncRePoyysixPYu-I2Q-uDd-UZH18e8M2_HJE=')
@@ -75,19 +74,9 @@ class Changetab:
 
             len_label = len('Xin chào, '+username)
             username_label = ctk.CTkLabel(self.top_frame, text = 'Xin chào, '+username)
-            username_label.place(x=1040-(len_label*2),y=y_center)
+            username_label.place(x=1060-(len_label*2),y=y_center)
 
-        #mailbox
-        mailbox = Image.open(os.path.join(os.path.dirname(__file__), "assets", "mail.webp"))
-        mailbox_img = ctk.CTkImage(light_image=mailbox, dark_image=mailbox, size=(24,24))
-
-        mail_button=ctk.CTkButton(self.top_frame,image=mailbox_img,text='',width=20,height=20,command=self.open_mailbox)
-        mail_button.configure(fg_color="transparent",hover=False)
-        mail_button.place(x=1130,y=y_center)
-
-        number_mail_label = ctk.CTkLabel(self.root,text='10',font=("Arial",11),width=10,height=7)
-        number_mail_label.configure(fg_color='red',corner_radius=40)
-        number_mail_label.place(x=1170,y=y_center+2)
+        
         
         #logout
         logout_button = ctk.CTkButton(self.top_frame, text='Đăng xuất',width=80,command=self.logout)
@@ -96,9 +85,6 @@ class Changetab:
         #need EXIT button
         exit_button = ctk.CTkButton(self.top_frame, text='Thoát',width=80,command=self.on_exit)
         exit_button.place(x=1270, y=y_center)
-    
-    def open_mailbox(self):
-        print('asdsa')
 
     def logout(self):
         result = messagebox.askyesno("Confirmation", "Bạn có muốn đăng xuất không?")
@@ -199,4 +185,12 @@ class Changetab:
             subject.create_tableframe(self.right_frame)
             self.cur_tab='SubjectMgt'
 
-        
+    def changeto_openclass_tab(self):
+        if self.cur_tab!='Openclass':
+            self.destroy_LeftRight_children()
+            
+            openclass = OpenClass.OpenClass()
+            self.root.title("Student Management System - Mở lớp dạy")
+            openclass.create_interactframe(self.left_frame)
+            openclass.create_tableframe(self.right_frame)
+            self.cur_tab='Openclass'

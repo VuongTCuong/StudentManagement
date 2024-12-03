@@ -26,6 +26,17 @@ class studentDAL:
             print('Created Database.')
         except sqlite3.Error as e:
             print(f"Error: Can not create table {e}")
+
+    def create_student_user(self,id,username,fullname,password,email):
+        try:
+            query = 'insert into users (id,username,fullname,password,email,role) values(?,?,?,?,?,?)'
+            self.cursor.execute(query,(id,username,fullname,password,email,'sinhvien'))
+            self.conn.commit()
+            if self.cursor.fetchone()!=None:
+                return True
+        except sqlite3.Error as e:
+            print(e)
+        return False
     
     def add_student(self,masv,tensv,namsinh,gioitinh,email,makhoa,tenlop):
         try:
@@ -34,6 +45,7 @@ class studentDAL:
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (masv, tensv, namsinh, gioitinh, email, makhoa, tenlop))
             self.conn.commit()
+            self.create_student_user(masv,masv,tensv,'123',email)
             return True
         except sqlite3.Error as e:
             print(e)
@@ -55,6 +67,7 @@ class studentDAL:
             print(e)
         return self.cursor.fetchall()
 
+    
     def is_exist_student(self,masv):
         try:
             self.cursor.execute('select * from SinhVien where masv='+masv)
@@ -77,7 +90,18 @@ class studentDAL:
                 except sqlite3.Error as e:
                     print(e)
         return False
-
+    
+    def delete_student_user(self,id):
+        try:
+            self.cursor.execute('''
+                DELETE FROM users
+                WHERE id = ?
+                ''', (id,))
+            self.conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(e)
+        return False
     def delete_student(self,masv):
         if self.is_exist_student(masv):
             try:
@@ -86,6 +110,7 @@ class studentDAL:
                     WHERE masv = ?
                 ''', (masv,))
                 self.conn.commit()
+                self.delete_student_user(masv)
                 return True
             except sqlite3.Error as e:
                 print(e)

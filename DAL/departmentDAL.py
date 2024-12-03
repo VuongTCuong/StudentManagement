@@ -13,7 +13,7 @@ class departmentDAL:
             self.cursor.execute('''
                 create table if not exists Khoa(
                     makhoa TEXT PRIMARY KEY,
-                    tenkhoa TEXT UNIQUE
+                    tenkhoa TEXT NOT NULL UNIQUE
                 )                                 
             ''')
             print('Created Database.')

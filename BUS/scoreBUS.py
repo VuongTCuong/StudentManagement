@@ -5,13 +5,13 @@ class scoreBUS:
         self.score_dal = scoreDAL()
     
     def add_score(self,score):
-        query = 'INSERT INTO Diem (mamonhoc,masv,diem) VALUES (?,?,?)'
-        params = (score.mamonhoc,score.masinhvien,score.diem)
+        query = 'INSERT INTO Diem (mamonhoc,masv,diemgk,diemthi) VALUES (?,?,?,?)'
+        params = (score.mamonhoc,score.masinhvien,score.diemgk,score.diemthi)
         return self.score_dal.add_score(query,params)
 
     def update_score(self, score):
-        query = 'UPDATE Diem SET diem=? WHERE mamonhoc=? AND masv=?'
-        params = (score.diem, score.mamonhoc, score.masinhvien)
+        query = 'UPDATE Diem SET diemgk=?,diemthi=? WHERE mamonhoc=? AND masv=?'
+        params = (score.diemgk,score.diemthi, score.mamonhoc, score.masinhvien)
         return self.score_dal.update_score(query, params)
     
     def delete_score(self,mamonhoc,masinhvien):

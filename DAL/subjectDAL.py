@@ -15,6 +15,7 @@ class subjectDAL:
                     mamon TEXT PRIMARY KEY,
                     tenmon TEXT NOT NULL,
                     makhoa TEXT NOT NULL,
+                    sotc INTEGER,
                     FOREIGN KEY(makhoa) REFERENCES Khoa(makhoa)
                 )                                 
             ''')

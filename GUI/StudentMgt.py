@@ -8,7 +8,6 @@ from RegisterGUI import RegisterGUI
 class StudentMgt:
     def __init__(self):
         self.root = ctk.CTk()
-        self.root.title("Student Management System - Student Management") 
         self.studentBUS = studentBUS.studentBUS()
         
     def create_interactframe(self,frame):
@@ -308,6 +307,7 @@ class StudentMgt:
         self.email_entry.delete(0, 'end')
         self.khoa_cb.set('')
         self.tenlop_cb.set('Vui lòng chọn khoa trước')
+        self.tenlop_cb.configure(values=['Vui lòng chọn khoa trước'])
 
     def get_tenlop_bykhoa(self,tenkhoa):
         class_BUS = classBUS.classBUS()

@@ -64,15 +64,31 @@ class SubjectMgt:
         self.khoa_cb = ctk.CTkComboBox(frame,width=230,values=makhoa,state='readonly',command=self.on_department_select)
         self.khoa_cb.place(x=100,y=90)
 
+        sotc_label = ctk.CTkLabel(frame,text='Số tín chỉ:')
+        sotc_label.place(x=10,y=170)
+
+        self.sotc_entry = ctk.CTkEntry(
+            frame,
+            placeholder_text="Nhập số tín chỉ",  
+            width=230,                    
+            height=35,                    
+            border_width=0,               
+            corner_radius=10,             
+            fg_color="#f2f2f2",           
+            text_color="#333333",         
+            placeholder_text_color="#888888" 
+        )
+        self.sotc_entry.place(x=100,y=170)
+
         #button 
         add_button = ctk.CTkButton(frame,text='Thêm',width=90,command=self.add_subject)
-        add_button.place(x=10,y=180)
+        add_button.place(x=10,y=230)
         reset_button = ctk.CTkButton(frame,text='Reset',width=90,command=self.clear_input)
-        reset_button.place(x=105,y=180)
+        reset_button.place(x=105,y=230)
         update_button = ctk.CTkButton(frame,text='Cập nhật',width=90,command=self.update_subject)
-        update_button.place(x=200,y=180)
+        update_button.place(x=200,y=230)
         delete_button = ctk.CTkButton(frame,text='Xoá',width=90,command=self.delete_subject)
-        delete_button.place(x=295,y=180)
+        delete_button.place(x=295,y=230)
     
     def create_tableframe(self,frame):
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
@@ -107,19 +123,21 @@ class SubjectMgt:
         scrollbar.place(x=10,y=50)
         # Create Treeview
         self.table = ttk.Treeview(scrollbar,height=23)
-        self.table['columns'] = ('mamonhoc', 'tenmonhoc', 'makhoa')
+        self.table['columns'] = ('mamonhoc', 'tenmonhoc', 'makhoa','sotinchi')
         
         # Define columns
         self.table.heading('mamonhoc', text='Mã Môn')
         self.table.heading('tenmonhoc', text='Tên Môn') 
         self.table.heading('makhoa', text='Khoa')
+        self.table.heading('sotinchi', text='Số Tín Chỉ')
 
         # Configure column widths
         self.table.column("#0", width=0, stretch=ctk.NO)
         self.table.column('mamonhoc', width=150)
         self.table.column('tenmonhoc', width=300)
-        self.table.column('makhoa', width=150)
-    
+        self.table.column('makhoa', width=120)
+        self.table.column('sotinchi', width=80)
+
         self.table.pack(side='left')
         self.table.bind('<ButtonRelease-1>', self.write_all_input)
         self.get_subject_to_table()
@@ -132,6 +150,7 @@ class SubjectMgt:
         self.tenkhoa_entry.configure(state='normal')
         self.tenkhoa_entry.delete(0, 'end')
         self.tenkhoa_entry.configure(state='disabled')
+        self.sotc_entry.delete(0,'end')
 
     def get_subject_to_table(self):
         try:
@@ -169,7 +188,7 @@ class SubjectMgt:
         mamonhoc = self.mamon_entry.get()
         tenmonhoc = self.tenmon_entry.get()
         makhoa = self.khoa_cb.get()
-        
+        sotc = self.sotc_entry.get()
         if mamonhoc.strip()=='' or tenmonhoc.strip()=='' or makhoa.strip()=='':
             return False, "Vui lòng nhập đầy đủ thông tin"
 
@@ -177,17 +196,18 @@ class SubjectMgt:
             return False, "Mã môn học không chứa ký tự đặc biệt"
         if any(not char.isalnum() for char in tenmonhoc.replace(" ","")):
             return False, "Tên môn học không chứa ký tự đặc biệt"
-        
+        if not sotc.isnumeric():
+            return False, "Số tín chỉ phải nhập số"
         return True,' thành công'
     def add_subject(self):
         mamonhoc = self.mamon_entry.get().strip()
         tenmonhoc = self.tenmon_entry.get().strip()
         makhoa = self.khoa_cb.get().strip()  # Get selected department from combobox
-
+        sotc = self.sotc_entry.get()
         is_valid,message = self.is_valid_input()
 
         if is_valid:
-            result = self.subjectBUS.add_subject(mamonhoc, tenmonhoc, makhoa)
+            result = self.subjectBUS.add_subject(mamonhoc, tenmonhoc, makhoa,sotc)
             if result:
                 self.clear_input()
                 self.get_subject_to_table()
@@ -200,10 +220,10 @@ class SubjectMgt:
         mamonhoc = self.mamon_entry.get()
         tenmonhoc = self.tenmon_entry.get()
         makhoa = self.khoa_cb.get()
-
+        sotc = self.sotc_entry.get()
         is_valid,message = self.is_valid_input()
         if is_valid:
-            result = self.subjectBUS.update_subject(mamonhoc, tenmonhoc, makhoa)
+            result = self.subjectBUS.update_subject(mamonhoc, tenmonhoc, makhoa,sotc)
             if result:
                 messagebox.showinfo("Success", "Cập nhật"+message)
                 self.clear_input()
@@ -259,7 +279,9 @@ class SubjectMgt:
                 self.tenkhoa_entry.delete(0, 'end')
                 self.tenkhoa_entry.insert(0, department[1])  # Assuming department name is at index 1
                 self.tenkhoa_entry.configure(state='disabled')
-    
+                
+            self.sotc_entry.insert(0, clicked_data[3])
+        
     def on_department_select(self, selected_makhoa):
         department_BUS = departmentBUS.departmentBUS()
         department = department_BUS.get_department_by_id(selected_makhoa)

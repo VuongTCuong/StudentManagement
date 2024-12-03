@@ -16,7 +16,7 @@ from BUS import userBUS
 import RegisterGUI
 import Changetab
 import Forgort_pwdGUI
-
+import StudentPage
 class LoginGUI:
     def __init__(self):
         self.userBUS = userBUS.userBUS()
@@ -128,8 +128,8 @@ class LoginGUI:
         login_btn.grid(row = 3, column = 0, columnspan = 2, ipadx = 50, pady = 5)
 
         #register button
-        btn_register = ctk.CTkButton(loginbox_frame, text="Tạo tài khoản", command=self.on_register)
-        btn_register.grid(row = 4, column = 0, columnspan = 2,ipadx = 50, pady = 5)
+        # btn_register = ctk.CTkButton(loginbox_frame, text="Tạo tài khoản", command=self.on_register)
+        # btn_register.grid(row = 4, column = 0, columnspan = 2,ipadx = 50, pady = 5)
 
         #forgot password button
         btn_forgot_pwd = ctk.CTkButton(loginbox_frame, text="Quên mật khẩu?", fg_color="transparent", 
@@ -147,9 +147,13 @@ class LoginGUI:
         #create object DTO user
         user = userDTO.userDTO(username,password)
         #check user using BUS method
-        if self.userBUS.login(user):
+        valid, role = self.userBUS.login(user)
+        if valid:
             self.root.destroy() #close login
-            Changetab.Changetab() #change manage screen
+            if role=='admin':
+                Changetab.Changetab() #change manage screen
+            if role=='sinhvien':
+                StudentPage.StudentPage()
         else:
             messagebox.showerror("Đăng nhập thất bại", "Tên đăng nhập hoặc mật khẩu không đúng.")
        
