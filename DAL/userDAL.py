@@ -88,6 +88,13 @@ class userDAL:
         except sqlite3.Error as e:
             print(f"Error, can not change pwd {e}")
 
+    def get_user_by_id(self,id):
+        try:
+            self.cursor.execute('''select * from users where id=?''',(id,))
+            self.conn.commit()
+            return self.cursor.fetchone()
+        except sqlite3.Error as e:
+            print(f"Error, can not change pwd {e}")
     #close connection
     def close(self):
         try: 

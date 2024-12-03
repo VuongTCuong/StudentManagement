@@ -21,7 +21,8 @@ class userBUS:
                 user_file = open('user.txt','wb')
                 user_file.write(f.encrypt(userDTO.username.encode()))
                 user_file.write(b'\n')
-                user_file.write(f.encrypt(userDTO.password.encode()))
+                user_file.write(f.encrypt(role.encode()))
+
         return is_success,role
     
     def register(self, user, email, fullname):
@@ -35,6 +36,8 @@ class userBUS:
     def update_pwd(self, email, new_pwd):
         return self.userDAL.update_pwd(email, new_pwd)
 
+    def get_user_by_id(self,id):
+        return self.userDAL.get_user_by_id(id)
     
     
 

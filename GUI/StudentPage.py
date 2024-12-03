@@ -1,12 +1,17 @@
 import customtkinter as ctk
+from tkinter import messagebox
 from PIL import Image
-import StudentProfile
+import os
+import StudentProfile,LoginGUI,RegisterSubject
+from BUS import userBUS
+from cryptography.fernet import Fernet
 class StudentPage:
     def __init__(self):
         self.root = ctk.CTk()
         self.root.title('Trang sinh viên - thông tin')
         self.root.geometry('1200x600')
         
+
         self.cur_tab = 'thongtin'
         self.user_canvas()
         self.menu_canvas()
@@ -26,17 +31,27 @@ class StudentPage:
         taikhoan_lab = ctk.CTkLabel(user_canvas,text='Tài khoản',text_color='#3d6d8b',font=('Roboto',16))
         taikhoan_lab.place(x=10,y=45)
 
-        mssv_lab = ctk.CTkLabel(user_canvas,text='3121411033',text_color='#3d6d8b',font=('Roboto',16))
+        if os.path.exists('user.txt'):
+            f = Fernet(b'LkQhEOBncRePoyysixPYu-I2Q-uDd-UZH18e8M2_HJE=')
+            user_file = open('user.txt','rb')
+            username = user_file.readline()
+            username = f.decrypt(username).decode()
+
+        mssv_lab = ctk.CTkLabel(user_canvas,text=username,text_color='#3d6d8b',font=('Roboto',16))
         mssv_lab.place(x=120,y=45)
 
         user_canvas.create_line((0,75,305,75),fill='#b8bec9')
+
+        user_bus = userBUS.userBUS()
+        user = user_bus.get_user_by_id(username)
+        
         hoten_lab = ctk.CTkLabel(user_canvas,text='Họ và tên',text_color='#3d6d8b',font=('Roboto',16))
         hoten_lab.place(x=10,y=80)
         
-        hotenuser_lab = ctk.CTkLabel(user_canvas,text='Vương Tiểu Cường',text_color='#3d6d8b',font=('Roboto',16))
+        hotenuser_lab = ctk.CTkLabel(user_canvas,text=user[2],text_color='#3d6d8b',font=('Roboto',16))
         hotenuser_lab.place(x=120,y=80)
 
-        logout_button = ctk.CTkButton(user_canvas,text='Đăng xuất',fg_color='#fec107',width=280,text_color='black',font=('Roboto',16))
+        logout_button = ctk.CTkButton(user_canvas,text='Đăng xuất',fg_color='#fec107',width=280,text_color='black',font=('Roboto',16),command=self.logout)
         logout_button.place(x=10,y=110)
         logout_button.configure(hover_color='#cfa619')
         doimk_button = ctk.CTkButton(user_canvas,text='Đổi mật khẩu',text_color='#3d6d8b',font=('Roboto',15,'underline'),width=20)
@@ -58,7 +73,7 @@ class StudentPage:
         
         menu_canvas.create_line((0,45,305,45),fill='#b8bec9')
 
-        dangkymon_button = ctk.CTkButton(menu_canvas,text='Đăng ký môn học',text_color='#3d6d8b',font=('Roboto',16),width=280)
+        dangkymon_button = ctk.CTkButton(menu_canvas,text='Đăng ký môn học',text_color='#3d6d8b',font=('Roboto',16),width=280,command=self.changeto_registersubject)
         dangkymon_button.place(x=10,y=55)
         dangkymon_button.configure(fg_color='transparent',corner_radius=0,hover_color='#dbdbdb',anchor='w')
         dangkymon_button.bind('<Enter>',lambda e:dangkymon_button.configure(text_color='#1b2f3d'))
@@ -66,11 +81,23 @@ class StudentPage:
 
         menu_canvas.create_line((0,90,305,90),fill='#b8bec9')
 
+    
     def main_canvas(self):
         self.main_canvas = ctk.CTkCanvas(self.root,bg='#dbdbdb',width=865,height=580)
         self.main_canvas.place(x=320,y=10)
 
-
-
+    def changeto_registersubject(self):
+        if self.cur_tab!='registersubject':
+            for child in self.main_canvas.winfo_children():
+                child.destroy()
+                register_sub = RegisterSubject.RegisterSubject()
+                register_sub.create_maincanvas(self.main_canvas)
+                self.root.title('Trang đăng ký môn học')
+                self.cur_tab='registersubject'
+    def logout(self):
+        result = messagebox.askyesno("Confirmation", "Bạn có muốn đăng xuất không?")
+        if result:
+            self.root.destroy()
+            os.remove('user.txt')
+            LoginGUI.LoginGUI()
         
-StudentPage()

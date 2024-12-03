@@ -71,7 +71,7 @@ class Changetab:
             user_file = open('user.txt','rb')
             username = user_file.readline()
             username = f.decrypt(username).decode()
-
+            
             len_label = len('Xin chào, '+username)
             username_label = ctk.CTkLabel(self.top_frame, text = 'Xin chào, '+username)
             username_label.place(x=1060-(len_label*2),y=y_center)

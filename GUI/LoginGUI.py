@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import messagebox, ttk, W
 from PIL import Image, ImageTk #library Pillow for handling images
 
-
+from cryptography.fernet import Fernet
 #for importing DTO and BUS module
 import sys
 import os
@@ -41,11 +41,26 @@ class LoginGUI:
         self.create_login_screen()
         
         if os.path.exists('user.txt'):
+            
+            f = Fernet(b'LkQhEOBncRePoyysixPYu-I2Q-uDd-UZH18e8M2_HJE=')
+            user_file = open('user.txt','rb')
+            username = user_file.readline()
+            username = f.decrypt(username).decode()
+
+            role = user_file.readline()
+            role = f.decrypt(role).decode()
+            user_file.close()
             self.root.destroy()
-            Changetab.Changetab()
+            if role=='admin':
+                Changetab.Changetab()
+            if role=='sinhvien':
+                StudentPage.StudentPage()
+
             
         #run
         self.root.mainloop()
+
+        
     
     def create_login_screen(self):
         #logo frame
