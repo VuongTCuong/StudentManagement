@@ -37,7 +37,7 @@ create table Diem(
     PRIMARY KEY(mamonhoc,masv)
 )
 create table MoLop(
-    mamolop INT primary key,
+    mamolop INTEGER primary key,
     mamon INTEGER,
     hocki TEXT,
     namhoc TEXT,
@@ -45,5 +45,12 @@ create table MoLop(
     siso INT,
     trangthai TEXT,
     FOREIGN KEY(mamon) REFERENCES Monhoc(mamonhoc)
+)
+create table SinhvienthamgiaLop(
+    mamolop INTEGER,
+    masv INTEGER,
+    FOREIGN KEY(mamolop) REFERENCES Monhoc(mamonhoc),
+    FOREIGN KEY(masv) REFERENCES Sinhvien(masv),
+    PRIMARY KEY(mamolop,masv)
 )
     

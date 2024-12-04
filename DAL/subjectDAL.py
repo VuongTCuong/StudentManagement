@@ -69,7 +69,7 @@ class subjectDAL:
     def get_subject_by_id(self,mamonhoc):
         try:
             self.cursor.execute('''
-                SELECT * FROM MonHoc WHERE mamon = ?
+                SELECT * FROM MonHoc WHERE mamonhoc = ?
             ''', (mamonhoc,))
             return self.cursor.fetchone()   
         except sqlite3.Error as e:

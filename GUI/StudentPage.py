@@ -10,7 +10,7 @@ class StudentPage:
         self.root = ctk.CTk()
         self.root.title('Trang thông tin sinh viên')
         self.root.geometry('1200x600')
-        
+        self.root.resizable(False,False)
 
         self.cur_tab = 'studentprofile'
         self.user_canvas()
@@ -36,8 +36,8 @@ class StudentPage:
             user_file = open('user.txt','rb')
             username = user_file.readline()
             username = f.decrypt(username).decode()
-
-        mssv_lab = ctk.CTkLabel(user_canvas,text=username,text_color='#3d6d8b',font=('Roboto',16))
+        self.current_user = username
+        mssv_lab = ctk.CTkLabel(user_canvas,text=self.current_user,text_color='#3d6d8b',font=('Roboto',16))
         mssv_lab.place(x=120,y=45)
 
         user_canvas.create_line((0,75,305,75),fill='#b8bec9')
@@ -107,6 +107,7 @@ class StudentPage:
             self.main_canvas.place(x=320,y=10)
             self.dangkymon_button.configure(fg_color='#aab0b6')
             register_sub = RegisterSubject.RegisterSubject()
+            register_sub.current_user=self.current_user
             register_sub.create_maincanvas(self.main_canvas)
             self.cancel_highlight_currentchoose()
             self.root.title('Trang đăng ký môn học')

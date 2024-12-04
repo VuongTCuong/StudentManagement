@@ -19,6 +19,18 @@ class OpenClassDAL:
         except sqlite3.Error as e:
             print(f"Error: Can not get {e}")
         return self.cursor.fetchall()
+    
+    def get_all_mo(self):
+        try:
+            query = '''select mamolop,mamon,tenmonhoc,makhoa,sotc,hocki,namhoc,giangvien,siso,trangthai
+                    from MoLop,Monhoc 
+                    where molop.mamon=Monhoc.mamonhoc and trangthai="Mở"'''
+            self.cursor.execute(query)
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"Error: Can not get {e}")
+        return self.cursor.fetchall()
+    
     def add_OpenClass(self,maml,mamon,hocki,namhoc,giangvien,siso,trangthai):
         try:
             query = 'insert into molop (mamolop,mamon,hocki,namhoc,giangvien,siso,trangthai) values (?,?,?,?,?,?,?)'

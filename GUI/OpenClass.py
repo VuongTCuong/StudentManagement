@@ -315,7 +315,6 @@ class OpenClass:
     def write_all_input(self,event):
         clicked_item = self.table.identify('item',event.x,event.y)
         clicked_data = self.table.item(clicked_item)['values']
-        curitem = self.table.focus()
     
         if clicked_item!='':
             self.clear_input()
@@ -369,13 +368,15 @@ class OpenClass:
         giangvien = self.giangvien_entry.get()
         siso = self.siso_entry.get()
         trangthai = self.trangthai_cb.get()
-
+        subBUS = subjectBUS.subjectBUS()
         is_valid, message = self.is_valid()
         if is_valid:
-            if self.openclass_bus.add_OpenClass(maml,mamon,hocki,namhoc,giangvien,siso,trangthai):
-                self.clear_input()
-                self.write_table()
-                messagebox.showinfo('Success','Thêm'+message)
+            if subBUS.get_subject_by_id(mamon) is not None:
+                if self.openclass_bus.add_OpenClass(maml,mamon,hocki,namhoc,giangvien,siso,trangthai):
+                    self.clear_input()
+                    self.write_table()
+                    messagebox.showinfo('Success','Thêm'+message)
+            else: messagebox.showerror('Error','Không tìm thấy mã môn học')
         else: messagebox.showerror('Error',message)
 
     def update_openclass(self):
@@ -386,13 +387,16 @@ class OpenClass:
         giangvien = self.giangvien_entry.get()
         siso = self.siso_entry.get()
         trangthai = self.trangthai_cb.get()
-
+        
         is_valid, message = self.is_valid()
+        subBUS = subjectBUS.subjectBUS()
         if is_valid:
-            if self.openclass_bus.update_OpenClass(maml,mamon,hocki,namhoc,giangvien,siso,trangthai):
-                self.clear_input()
-                self.write_table()
-                messagebox.showinfo('Success','Cập nhật'+message)
+            if subBUS.get_subject_by_id(mamon) is not None:
+                if self.openclass_bus.update_OpenClass(maml,mamon,hocki,namhoc,giangvien,siso,trangthai):
+                    self.clear_input()
+                    self.write_table()
+                    messagebox.showinfo('Success','Cập nhật'+message)
+            else: messagebox.showerror('Error','Không tìm thấy mã môn học')
         else:
             messagebox.showerror('Error',message)
 

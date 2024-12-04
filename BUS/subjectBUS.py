@@ -7,7 +7,7 @@ class subjectBUS:
     def add_subject(self, mamonhoc, tenmonhoc, makhoa, sotinchi):
         try:
             query = """
-                INSERT INTO MonHoc (mamonhoc, tenmonhoc, makhoa, sotinchi)
+                INSERT INTO MonHoc (mamonhoc, tenmonhoc, makhoa, sotc)
                 VALUES (?, ?, ?, ?)
             """
             params = (mamonhoc, tenmonhoc, makhoa, sotinchi)
@@ -32,10 +32,10 @@ class subjectBUS:
         try:
             query = """
                 UPDATE MonHoc 
-                SET tenmonhoc = ?, makhoa = ?, sotinchi = ?
+                SET tenmonhoc = ?, makhoa = ?, sotc = ?
                 WHERE mamonhoc = ?
             """
-            params = (tenmonhoc, makhoa, mamonhoc, sotinchi)
+            params = (tenmonhoc, makhoa, sotinchi, mamonhoc)
             return self.subjectDAL.update_subject(query, params)
         except Exception as e:
             print(f"Error in update_subject: {str(e)}")

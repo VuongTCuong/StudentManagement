@@ -6,6 +6,9 @@ class OpenClassBUS:
     def get_all(self):
         return self.OpenClassDAL.get_all()
     
+    def get_all_mo(self):
+        return self.OpenClassDAL.get_all_mo()
+    
     def add_OpenClass(self,maml,mamon,hocki,namhoc,giangvien,siso,trangthai):
         return self.OpenClassDAL.add_OpenClass(maml,mamon,hocki,namhoc,giangvien,siso,trangthai)
 
