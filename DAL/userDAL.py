@@ -67,10 +67,11 @@ class userDAL:
                     SELECT * FROM users WHERE username = ? AND password = ?
                                 ''', (username, pwd))
             user = self.cursor.fetchone()
-            return user is not None,user[5] #return True if exist user, False if not exist
+            if user is not None: 
+                return user is not None, user[5] #return True if exist user, False if not exist
+            else: return user is not None, None
         except sqlite3.Error as e:
             print(f"Error can not check user information: {e}")
-
 
     def existed_email(self, email):
         try:
