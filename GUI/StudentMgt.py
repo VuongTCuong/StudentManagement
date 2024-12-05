@@ -5,6 +5,7 @@ from datetime import datetime
 from BUS import classBUS,studentBUS,departmentBUS
 from DTO import studentDTO
 from RegisterGUI import RegisterGUI
+import contactGUI
 class StudentMgt:
     def __init__(self):
         self.root = ctk.CTk()
@@ -65,9 +66,12 @@ class StudentMgt:
         self.gioitinh_cb = ctk.CTkComboBox(frame,width=230,values=['Nam','Nữ'],state='readonly')
         self.gioitinh_cb.place(x=100,y=130)
 
+        
         email_lab = ctk.CTkLabel(frame,text="Email:")
         email_lab.place(x=10,y=170)
         # self.email_entry = ctk.CTkEntry(frame,width=230)
+        # Create a StringVar to track text field input (empty or not)
+        self.text_var = ctk.StringVar()
         self.email_entry = ctk.CTkEntry(
             frame,
             placeholder_text="Nhập Email",  
@@ -77,7 +81,7 @@ class StudentMgt:
             corner_radius=10,             
             fg_color="#f2f2f2",           
             text_color="#333333",         
-            placeholder_text_color="#888888" 
+            placeholder_text_color="#888888" , textvariable = self.text_var
         )
         self.email_entry.place(x=100,y=170)
 
@@ -111,9 +115,27 @@ class StudentMgt:
         delete_button = ctk.CTkButton(frame,text='Xoá',width=90,command=self.delete_student)
         delete_button.place(x=295,y=320)
 
-        import_button = ctk.CTkButton(frame,text='Import CSV File',width=90,command=self.import_csv)
+        import_button = ctk.CTkButton(frame,text='Import CSV',width=90,command=self.import_csv)
         import_button.place(x=10,y=370)
-    
+
+        self.mail_button = ctk.CTkButton(frame,text='Liên hệ SV',width=90,command=self.open_contact_gui, state='disabled')
+        self.mail_button.place(x=105,y=370)
+        # Trace changes in the text variable
+        self.text_var.trace_add('write', self.update_button_state)
+
+    def update_button_state(self, *args):
+        """Enable or disable the button based on the entry field content."""
+        if self.text_var.get().strip():  # Check if the entry is not empty
+            self.mail_button.configure(state='normal')
+        else:
+            self.mail_button.configure(state='disabled')
+      
+    def open_contact_gui(self):
+        email = self.email_entry.get()
+        print(email)
+        contactGUI.ContactGUI(email)
+
+
     def create_tableframe(self,frame):
         #student table
         search_lab = ctk.CTkLabel(frame,text="Tìm kiếm:")
