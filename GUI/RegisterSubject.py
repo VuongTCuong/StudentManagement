@@ -3,7 +3,8 @@ import tkinter as ttk
 from tkinter import messagebox
 from PIL import Image,ImageTk
 import os
-from BUS import OpenClassBUS,studentjoinclassBUS
+from BUS import OpenClassBUS,studentjoinclassBUS,scoreBUS
+from DTO import scoreDTO
 class RegisterSubject:
     def __init__(self):
         self.root = ctk.CTk()
@@ -24,7 +25,7 @@ class RegisterSubject:
         reset_button = ctk.CTkButton(main_canvas,text='Reset',width=70,height=27,text_color='black',command=self.reset)
         reset_button.place(x=250,y=50)
 
-        my_class_button = ctk.CTkButton(main_canvas,
+        self.my_class_button = ctk.CTkButton(main_canvas,
                                         text='Lớp đã đăng ký',
                                         width=70,
                                         height=27,
@@ -32,8 +33,9 @@ class RegisterSubject:
                                         font=('Roboto',15,'underline'),
                                         fg_color='transparent',
                                         hover_color='#c3c3c3',
+                                        corner_radius=0,
                                         command=self.filter_my_class)
-        my_class_button.place(x=720,y=50)
+        self.my_class_button.place(x=720,y=50)
 
         #table
         mamon_header = ctk.CTkLabel(main_canvas,text='Mã môn',font=('Roboto',15,'bold'),text_color='black')
@@ -58,13 +60,13 @@ class RegisterSubject:
         self.content_frame = ctk.CTkFrame(main_canvas,width=870,height=450)
         self.content_frame.place(x=0,y=100)
         #lay tat ca cac lop ở trạng thái mở
-        openclass_BUS = OpenClassBUS.OpenClassBUS()
-        self.content = openclass_BUS.get_all_mo()
-
+        self.content = self.studentjoinclass.get_all_soluongsv_mo()
+ 
         #lấy tất cả các lớp mà sinh viên hiện tại đã tham gia
         
         self.current_join = self.studentjoinclass.get_all_class_joined(self.current_user)
-   
+        self.current_subject = self.studentjoinclass.get_all_subject_joined(self.current_user)
+
         self.changeto_X_page(self.current_page)
 
         previous_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "left.png"))
@@ -127,6 +129,7 @@ class RegisterSubject:
         tick_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "check.png"))
         tick_icon_ctk = ctk.CTkImage(light_image=tick_icon,dark_image=tick_icon,size=(17,17))
 
+        
         for i in range(left_limit,right_limit):
             mamon_row = ctk.CTkLabel(self.content_frame,text=self.content[i][1],font=('Roboto',13))
             mamon_row.place(x=10,y=(i%10)*45+10)
@@ -136,17 +139,17 @@ class RegisterSubject:
             
             makhoa_row = ctk.CTkLabel(self.content_frame,text=self.content[i][3],font=('Roboto',13))
             makhoa_row.place(x=330,y=(i%10)*45+10)
-
+ 
             sotc_row = ctk.CTkLabel(self.content_frame,text=self.content[i][4],font=('Roboto',13))
             sotc_row.place(x=420,y=(i%10)*45+10)
 
             giangvien_row = ctk.CTkLabel(self.content_frame,text=self.content[i][7],font=('Roboto',13))
             giangvien_row.place(x=500,y=(i%10)*45+10)
             
-            siso_row = ctk.CTkLabel(self.content_frame,text=self.content[i][8],font=('Roboto',13))
+            siso_row = ctk.CTkLabel(self.content_frame,text=str(self.content[i][10])+"/"+str(self.content[i][8]),font=('Roboto',13))
             siso_row.place(x=700,y=(i%10)*45+10)
-            
-            
+            if self.content[i][10]==self.content[i][8]:
+                siso_row.configure(text_color='red')
             if self.content[i][0] not in self.current_join:
 
                 add_button_ar[self.content[i][0]] = ctk.CTkButton(self.content_frame,
@@ -173,25 +176,54 @@ class RegisterSubject:
                 tick_button.place(x=800,y=(i%10)*45+10)
 
     def student_join(self,current_lop):
+        current_mamon = self.studentjoinclass.get_mamon_by_lop(current_lop)[1]
+
+        for i in self.content:
+            if current_lop == i[0] and i[10]>=i[8]:
+                messagebox.showinfo('Thông báo','Không thể đăng ký lớp này vì đã đầy!')
+                return
+                
+        if current_mamon in self.current_subject:
+            messagebox.showinfo('Thông báo','Bạn đã đăng ký lớp dạy môn này!')
+            return
+             
         result = messagebox.askyesno("Xác nhận", "Bạn có muốn đăng ký lớp này không ?")
         if result:
             messagebox.showinfo('Thông báo','Đăng ký thành công!')
             studentjoinclass_bus = studentjoinclassBUS.studentjoinclassBUS()
             studentjoinclass_bus.add_student(current_lop,self.current_user)
-        self.current_join = self.studentjoinclass.get_all_class_joined(self.current_user)
-        self.changeto_X_page(self.current_page)
+            self.current_join.append(current_lop)
+            self.current_subject.append(current_mamon)
+            #them vao bang diem
+            score_bus = scoreBUS.scoreBUS()
+            score_obj = scoreDTO.scoreDTO(current_mamon,self.current_user,'','')
+            score_bus.add_score(score_obj)
+            self.content = self.studentjoinclass.get_all_soluongsv_mo()
+            self.changeto_X_page(self.current_page)
     
     def cancel_join(self,current_lop):
+        current_mamon = self.studentjoinclass.get_mamon_by_lop(current_lop)[1]
         result = messagebox.askyesno("Xác nhận", "Bạn có muốn huỷ lớp này không ?")
         if result:
             messagebox.showinfo('Thông báo','Huỷ thành công!')
             studentjoinclass_bus = studentjoinclassBUS.studentjoinclassBUS()
             studentjoinclass_bus.delete_student(current_lop,self.current_user)
-        self.current_join = self.studentjoinclass.get_all_class_joined(self.current_user)
-        self.changeto_X_page(self.current_page)
+            self.current_join.remove(current_lop)
+            self.current_subject.remove(current_mamon)
+            #xoa khoi bang diem
+            score_bus = scoreBUS.scoreBUS()
+            mamon = self.studentjoinclass.get_mamon_by_lop(current_lop)[1]
+            score_bus.delete_score(mamon,self.current_user)
+            if self.my_class_button._fg_color=='#c3c3c3': # đang ở trang "lớp đã đăng ký"
+                self.filter_my_class()
+            else:
+                self.content = self.studentjoinclass.get_all_soluongsv_mo() 
+                self.changeto_X_page(self.current_page)
 
     def filter_my_class(self):
-        self.content = [i for i in self.content if i[0] in self.current_join]
+        self.my_class_button.configure(fg_color='#c3c3c3')
+
+        self.content = [i for i in self.studentjoinclass.get_all_soluongsv() if i[0] in self.current_join]
         self.changeto_X_page(1)
 
     def search(self):
@@ -200,10 +232,10 @@ class RegisterSubject:
         self.changeto_X_page(1)
 
     def reset(self):
+        self.my_class_button.configure(fg_color='transparent')
         self.search_entry.delete(0,'end')
         self.content_frame.focus()
-        openclass_BUS = OpenClassBUS.OpenClassBUS()
-        self.content = openclass_BUS.get_all_mo()
+        self.content = self.studentjoinclass.get_all_soluongsv_mo()
         self.changeto_X_page(1)
 
              

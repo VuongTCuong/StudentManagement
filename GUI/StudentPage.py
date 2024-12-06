@@ -130,6 +130,7 @@ class StudentPage:
             self.main_canvas.place(x=320,y=10)
             self.diem_button.configure(fg_color='#aab0b6')
             studentscore = StudentScore.StudentScore()
+            studentscore.current_user=self.current_user
             studentscore.create_maincanvas(self.main_canvas)
             self.cancel_highlight_currentchoose()
             self.root.title('Trang điểm sinh viên')

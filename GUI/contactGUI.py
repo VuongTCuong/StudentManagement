@@ -24,6 +24,7 @@ class ContactGUI:
         self.app = ctk.CTk()
         self.app.title("Student Management System - Form Gửi Email")
         self.app.geometry("500x500")
+        self.app.resizable(False,False)
         self.receiver = receiver
         self.create_widgets()
         self.app.mainloop()
