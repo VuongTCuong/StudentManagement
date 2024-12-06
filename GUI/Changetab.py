@@ -13,6 +13,7 @@ class Changetab:
     def __init__(self):
         self.root = ctk.CTk()
         self.root.title("Student Management System - Student Management") 
+        self.root.configure(fg_color='#F2DDDC')
         #center window
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
@@ -40,7 +41,7 @@ class Changetab:
 
     def top_frame(self):
         #parent
-        self.top_frame = ctk.CTkFrame(self.root,width=1400,height=40)
+        self.top_frame = ctk.CTkFrame(self.root,fg_color='#F6BCBA',width=1400,height=40)
         self.top_frame.pack(side='top',padx=20,pady=5)
         
         #center top-down button in parent (28 is default height of any button)
@@ -102,14 +103,14 @@ class Changetab:
             sys.exit()
             
     def left_frame(self):
-        self.left_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width/3)
+        self.left_frame = ctk.CTkFrame(self.root,fg_color='#F6BCBA',height=self.root._current_height-70,width=self.root._current_width/3)
         self.left_frame.pack(side='left',padx=20)
 
     def right_frame(self):
-        self.right_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width*2/3)
+        self.right_frame = ctk.CTkFrame(self.root,fg_color='#F6BCBA',height=self.root._current_height-70,width=self.root._current_width*2/3)
         self.right_frame.pack(side='right',padx=20)
     def center_frame(self):
-        self.center_frame = ctk.CTkFrame(self.root,height=self.root._current_height-50,width=self.root._current_width*2/3)
+        self.center_frame = ctk.CTkFrame(self.root,fg_color='#F6BCBA',height=self.root._current_height-70,width=self.root._current_width*2/3)
         self.center_frame.pack(side='left',padx=20)
 
     def set_current_tab(self,tab_name):
@@ -188,8 +189,8 @@ class Changetab:
     def changeto_openclass_tab(self):
         if self.cur_tab!='Openclass':
             self.destroy_LeftRight_children()
-            
             openclass = OpenClass.OpenClass()
+            openclass.root=self.root
             self.root.title("Student Management System - Mở lớp dạy")
             openclass.create_interactframe(self.left_frame)
             openclass.create_tableframe(self.right_frame)

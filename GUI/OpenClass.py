@@ -1,7 +1,9 @@
 import customtkinter as ctk
 from tkinter import ttk,messagebox
 from BUS import departmentBUS,subjectBUS, OpenClassBUS
+from PIL import Image
 import datetime
+import os
 class OpenClass:
     def __init__(self):
         self.root = ctk.CTk()
@@ -229,7 +231,7 @@ class OpenClass:
         self.table.column('Trạng thái', width=80)
         self.table.pack(side='left')
         self.table.bind('<Button-1>',self.write_all_input)
-
+        self.table.bind('<Double-Button-1>',self.danhsachsv)
         self.write_table()
 
     def set_thongtin_mon(self,event):
@@ -446,3 +448,60 @@ class OpenClass:
         self.hocki_cb_filter.set('Học kì')
         self.table.delete(*self.table.get_children())
         self.write_table()
+
+    def danhsachsv(self,event):
+        clicked_item = self.table.identify('item',event.x,event.y)
+        clicked_data = self.table.item(clicked_item)['values']
+        if clicked_data:
+            scroll_frame = ctk.CTkScrollableFrame(self.root,width=750,height=500,fg_color='#fdfdc9')
+            scroll_frame.place(x=300,y=50)
+            header = ctk.CTkLabel(scroll_frame,text='Danh sách sinh viên của lớp: '+str(clicked_data[0]),font=('Roboto',17,'bold'))
+            header.pack()
+
+            table = ttk.Treeview(scroll_frame,height=23,)
+            table['columns'] = ('Mã SV', 'Họ Tên', 'Năm Sinh', 'Giới Tính', 'Email','Mã Khoa' ,'Tên Lớp')
+            table.heading('Mã SV', text='Mã SV')
+            table.heading('Họ Tên', text='Họ Tên')
+            table.heading('Năm Sinh', text='Năm Sinh')
+            table.heading('Giới Tính', text='Giới Tính')
+            table.heading('Email', text='Email')
+            table.heading('Mã Khoa', text='Mã Khoa')
+            table.heading('Tên Lớp', text='Tên Lớp')
+
+            # Adjust column widths to fit within table_frame
+            table.column("#0", width=0, stretch=ctk.NO)
+            table.column('Mã SV', width=80)
+            table.column('Họ Tên', width=140)
+            table.column('Năm Sinh', width=100)
+            table.column('Giới Tính', width=70)
+            table.column('Email', width=150)
+            table.column('Mã Khoa', width=60)
+            table.column('Tên Lớp', width=100)
+            table.pack()
+
+            all_sv = self.openclass_bus.get_sv_by_malop(clicked_data[0])
+            print(all_sv)
+            for i in all_sv:
+                table.insert('','end',value=i)
+            red_x_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "red_x.png"))
+            red_x_icon_ctk = ctk.CTkImage(light_image=red_x_icon,dark_image=red_x_icon,size=(15,15))
+            black_x_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "black_x.png"))
+            black_x_icon_ctk = ctk.CTkImage(light_image=black_x_icon,dark_image=black_x_icon,size=(15,15))
+            close_button = ctk.CTkButton(scroll_frame,
+                                        text='Đóng',
+                                        width=60,
+                                        height=30,
+                                        image=red_x_icon_ctk,
+                                        text_color='#ff4a5d',
+                                        corner_radius=5,
+                                        border_color='#ff4a5d',
+                                        border_width=1.5,
+                                        fg_color='transparent',
+                                        font=('Roboto',16),
+                                        command=lambda: scroll_frame.place_forget())
+            self.root.bind('<Escape>',lambda e: scroll_frame.place_forget())
+            
+                    
+            close_button.bind('<Enter>',lambda e: close_button.configure(image=black_x_icon_ctk,text_color='black',fg_color='#ff4a5d'))
+            close_button.bind('<Leave>',lambda e: close_button.configure(image=red_x_icon_ctk,text_color='#ff4a5d',fg_color='transparent'))
+            close_button.pack(anchor='ne',padx=50,pady=20)

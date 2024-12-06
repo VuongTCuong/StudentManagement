@@ -56,7 +56,7 @@ class LoginGUI:
             if role=='sinhvien':
                 StudentPage.StudentPage()
 
-            
+        self.root.bind('<Return>',lambda e: self.on_login())
         #run
         self.root.mainloop()
 

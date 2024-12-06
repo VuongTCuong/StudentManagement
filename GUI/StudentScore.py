@@ -54,16 +54,20 @@ class StudentScore:
         hocki = selection[0:8]
         namhoc = selection[19:]
         self.bangdiem = self.studentscore.get_score_info(self.current_user,hocki,namhoc)
-        print(self.bangdiem)
+
         chitiet_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "info.png"))
         chitiet_icon_ctk = ctk.CTkImage(light_image=chitiet_icon,dark_image=chitiet_icon,size=(20,20))
         zoomed_chitiet_icon_ctk = ctk.CTkImage(light_image=chitiet_icon,dark_image=chitiet_icon,size=(25,25))
         
         chitiet_button = dict()
-
+        xuat_diemtb=True
         for i in main_canvas.winfo_children():
             if(type(i)!=ctk.CTkComboBox):
                 i.destroy()
+        dtb_he4_value = 0
+        dtb_he10_value = 0
+        sotc_hk_value = 0 
+        
         for i in range(0,len(self.bangdiem)):
             main_canvas.create_line((10,140+i*40,10,180+i*40),fill='#348cd4')
             lab = ctk.CTkLabel(main_canvas,text=self.bangdiem[i][0],font=('Roboto',14))
@@ -78,7 +82,9 @@ class StudentScore:
 
             if self.bangdiem[i][3]!='' and self.bangdiem[i][4]!='':
                 dtk_he10 = round((float(self.bangdiem[i][3])+float(self.bangdiem[i][4]))/2,1)
-            else: dtk_he10=''
+            else: 
+                dtk_he10=''
+                xuat_diemtb = False
             lab3 = ctk.CTkLabel(main_canvas,text=str(dtk_he10),font=('Roboto',14))
             lab3.place(x=450,y=145+i*40)
             main_canvas.create_line((510,140+i*40,510,180+i*40),fill='#348cd4')
@@ -135,41 +141,108 @@ class StudentScore:
             chitiet_button[self.bangdiem[i][0]].bind('<Leave>',lambda e,x=self.bangdiem[i][0]: chitiet_button[x].configure(image=chitiet_icon_ctk))
             main_canvas.create_line((860,140+i*40,860,180+i*40),fill='#348cd4')
             main_canvas.create_line((10,180+i*40,860,180+i*40),fill='#348cd4')
+
+            #tính điểm dtb các hệ khi các môn đủ điểm
+            if xuat_diemtb:
+                dtb_he4_value += dtk_he_4*int(self.bangdiem[i][2])
+                dtb_he10_value += dtk_he10*int(self.bangdiem[i][2])
+                sotc_hk_value += int(self.bangdiem[i][2])
+
+            
+        dtb_he4 = ctk.CTkLabel(main_canvas,text='- Điểm trung bình học kỳ hệ 4:',text_color='#2288aa',font=('Roboto',15))
+        dtb_he4.place(x=10,y=160+40*len(self.bangdiem))
+        dtb_he10 = ctk.CTkLabel(main_canvas,text='- Điểm trung bình học kỳ hệ 10:',text_color='#2288aa',font=('Roboto',15))
+        dtb_he10.place(x=10,y=200+40*len(self.bangdiem))
+        sotc_hk = ctk.CTkLabel(main_canvas,text='- Số tín chỉ đạt học kỳ:',text_color='#2288aa',font=('Roboto',15))
+        sotc_hk.place(x=10,y=240+40*len(self.bangdiem))
+        dtb_tichluy_he4 = ctk.CTkLabel(main_canvas,text='- Điểm trung bình tích luỹ hệ 4:',text_color='#2288aa',font=('Roboto',15))
+        dtb_tichluy_he4.place(x=500,y=160+40*len(self.bangdiem))
+        dtb_tichluy_he10 = ctk.CTkLabel(main_canvas,text='- Điểm trung bình tích luỹ hệ 10:',text_color='#2288aa',font=('Roboto',15))
+        dtb_tichluy_he10.place(x=500,y=200+40*len(self.bangdiem))
+        sotc_tichluy = ctk.CTkLabel(main_canvas,text='- Số tín chỉ tích luỹ:',text_color='#2288aa',font=('Roboto',15))
+        sotc_tichluy.place(x=500,y=240+40*len(self.bangdiem))
+
+        whole_score = self.studentscore.get_whole_score(self.current_user)
+        dtb_tichluy_he4_value = 0
+        dtb_tichluy_he10_value = 0
+        sotc_tichluy_value = 0
+        for i in whole_score:
+            sotc_tichluy_value += int(i[1])
+            dtb_tichluy_he10_value += float(i[2])*int(i[1])
+            dtb_tichluy_he4_value += float(i[3])*int(i[1])
+
+        dtb_tichluy_he4_value = round(dtb_tichluy_he4_value/sotc_tichluy_value,2)
+        dtb_tichluy_he10_value = round(dtb_tichluy_he10_value/sotc_tichluy_value,2)
+
+        if xuat_diemtb:
+            dtb_he4_value = round(dtb_he4_value/sotc_hk_value,2)
+            dtb_he10_value = round(dtb_he10_value/sotc_hk_value,2)
+            dtb_he4_value_lab = ctk.CTkLabel(main_canvas,text=str(dtb_he4_value),text_color='#2288aa',font=('Roboto',15,'bold'))
+            dtb_he4_value_lab.place(x=250,y=160+40*len(self.bangdiem))
+            dtb_he10_value_lab = ctk.CTkLabel(main_canvas,text=str(dtb_he10_value),text_color='#2288aa',font=('Roboto',15,'bold'))
+            dtb_he10_value_lab.place(x=250,y=200+40*len(self.bangdiem))
+            sotc_hk_value_lab = ctk.CTkLabel(main_canvas,text=str(sotc_hk_value),text_color='#2288aa',font=('Roboto',15,'bold'))
+            sotc_hk_value_lab.place(x=250,y=240+40*len(self.bangdiem))
+            dtb_tichluy_he4_value_lab = ctk.CTkLabel(main_canvas,text=str(dtb_tichluy_he4_value),text_color='#2288aa',font=('Roboto',15,'bold'))
+            dtb_tichluy_he4_value_lab.place(x=750,y=160+40*len(self.bangdiem))
+            dtb_tichluy_he10_value_lab = ctk.CTkLabel(main_canvas,text=str(dtb_tichluy_he10_value),text_color='#2288aa',font=('Roboto',15,'bold'))
+            dtb_tichluy_he10_value_lab.place(x=750,y=200+40*len(self.bangdiem))
+            sotc_tichluy_value_lab = ctk.CTkLabel(main_canvas,text=str(sotc_tichluy_value),text_color='#2288aa',font=('Roboto',15,'bold'))
+            sotc_tichluy_value_lab.place(x=750,y=240+40*len(self.bangdiem))
+
+        
     def chitiet_canvas(self,main_canvas,mon):
-        chitiet_canvas = ctk.CTkCanvas(main_canvas,width=500,height=180,bg='white')
+        chitiet_canvas = ctk.CTkCanvas(main_canvas,width=500,height=200,bg='white')
         chitiet_canvas.place(x=200,y=220)
         
         tenmon_lab = ctk.CTkLabel(chitiet_canvas,text=mon[1],text_color='#02578a',font=('Roboto',16,'bold'))
         tenmon_lab.place(x=10,y=10)
+        chitiet_canvas.create_rectangle((0,40,510,80),fill='#07689f',outline='white')
+        chitiet_canvas.create_text((68,60),text='Tên thành phần',fill='white',font=('Roboto 11 bold'))
+        chitiet_canvas.create_line((150,40,150,150),fill='#e0e1e2')
 
-        chitiet_canvas.create_text((68,50),text='Tên thành phần',fill='black',font=('Roboto 11 bold'))
-        chitiet_canvas.create_text((250,50),text='Trọng số (%)',fill='black',font=('Roboto 11 bold'))
-        chitiet_canvas.create_text((420,50),text='Điểm thành phần',fill='black',font=('Roboto 11 bold'))
+        chitiet_canvas.create_text((250,60),text='Trọng số (%)',fill='white',font=('Roboto 11 bold'))
+        chitiet_canvas.create_line((340,40,340,150),fill='#e0e1e2')
 
+        chitiet_canvas.create_text((420,60),text='Điểm thành phần',fill='white',font=('Roboto 11 bold'))
+        
         thanhphan_1 = ctk.CTkLabel(chitiet_canvas,text='Kiểm tra',font=('Roboto',15))
-        thanhphan_1.place(x=11,y=70)
+        thanhphan_1.place(x=11,y=80)
 
         thanhphan_2 = ctk.CTkLabel(chitiet_canvas,text='Điểm thi',font=('Roboto',15))
-        thanhphan_2.place(x=11,y=110)
+        thanhphan_2.place(x=11,y=120)
 
         trongso = ctk.CTkLabel(chitiet_canvas,text='50',font=('Roboto',15))
-        trongso.place(x=235,y=70)
+        trongso.place(x=235,y=80)
 
         trongso = ctk.CTkLabel(chitiet_canvas,text='50',font=('Roboto',15))
-        trongso.place(x=235,y=110)
+        trongso.place(x=235,y=120)
         diemtp_1 = ctk.CTkLabel(chitiet_canvas,text=str(mon[3]),font=('Roboto',15))
-        diemtp_1.place(x=415,y=70)
+        diemtp_1.place(x=415,y=80)
         diemtp_2 = ctk.CTkLabel(chitiet_canvas,text=str(mon[4]),font=('Roboto',15))
-        diemtp_2.place(x=415,y=110)
+        diemtp_2.place(x=415,y=120)
+
+        chitiet_canvas.create_line((0,115,510,115),fill='#e0e1e2')
+        chitiet_canvas.create_line((0,150,510,150),fill='#e0e1e2')
+        red_x_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "red_x.png"))
+        red_x_icon_ctk = ctk.CTkImage(light_image=red_x_icon,dark_image=red_x_icon,size=(15,15))
+        black_x_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "black_x.png"))
+        black_x_icon_ctk = ctk.CTkImage(light_image=black_x_icon,dark_image=black_x_icon,size=(15,15))
         close_button = ctk.CTkButton(chitiet_canvas,
                                      text='Đóng',
                                      width=60,
                                      height=30,
-                                     text_color='red',
+                                     image=red_x_icon_ctk,
+                                     text_color='#ff4a5d',
                                      corner_radius=5,
-                                     
+                                     border_color='#ff4a5d',
+                                     border_width=1.5,
+                                     fg_color='transparent',
+                                     font=('Roboto',16),
                                      command=lambda : chitiet_canvas.destroy())
-        close_button.place(x=430,y=145)
+        close_button.bind('<Enter>',lambda e: close_button.configure(image=black_x_icon_ctk,text_color='black',fg_color='#ff4a5d'))
+        close_button.bind('<Leave>',lambda e: close_button.configure(image=red_x_icon_ctk,text_color='#ff4a5d',fg_color='transparent'))
+        close_button.place(x=425,y=165)
 
 
         

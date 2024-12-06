@@ -11,7 +11,7 @@ class StudentPage:
         self.root.title('Trang thông tin sinh viên')
         self.root.geometry('1200x600')
         self.root.resizable(False,False)
-
+        self.root.configure(fg_color='#F2DDDC')
         self.cur_tab = 'studentprofile'
         self.user_canvas()
         self.menu_canvas()

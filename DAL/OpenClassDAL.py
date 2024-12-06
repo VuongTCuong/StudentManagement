@@ -99,3 +99,13 @@ class OpenClassDAL:
         except sqlite3.Error as e:
             print(f"Error: Can not get {e}")
         return []
+    def get_sv_by_malop(self,maml):
+        try:
+            query = ''' select s.masv,tensv,namsinh,gioitinh,email,makhoa,tenlop 
+                        from Sinhvienthamgialop sv, sinhvien s
+                        where sv.masv = s.masv and mamolop=?'''
+            self.cursor.execute(query,(maml,))
+            self.conn.commit()
+            return self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error: Can not find: {e}")

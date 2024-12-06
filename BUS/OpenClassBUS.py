@@ -24,3 +24,6 @@ class OpenClassBUS:
         if hocki=='Học kì':
             hocki=''
         return self.OpenClassDAL.filter(khoa,hocki)
+    
+    def get_sv_by_malop(self,maml):
+        return self.OpenClassDAL.get_sv_by_malop(maml)
