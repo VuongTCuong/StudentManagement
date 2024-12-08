@@ -54,7 +54,8 @@ class StudentScore:
         hocki = selection[0:8]
         namhoc = selection[19:]
         self.bangdiem = self.studentscore.get_score_info(self.current_user,hocki,namhoc)
-
+        print(self.bangdiem)
+        main_canvas.delete('draw')
         chitiet_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "info.png"))
         chitiet_icon_ctk = ctk.CTkImage(light_image=chitiet_icon,dark_image=chitiet_icon,size=(20,20))
         zoomed_chitiet_icon_ctk = ctk.CTkImage(light_image=chitiet_icon,dark_image=chitiet_icon,size=(25,25))
@@ -69,25 +70,25 @@ class StudentScore:
         sotc_hk_value = 0 
         
         for i in range(0,len(self.bangdiem)):
-            main_canvas.create_line((10,140+i*40,10,180+i*40),fill='#348cd4')
+            main_canvas.create_line((10,140+i*40,10,180+i*40),fill='#348cd4',tags='draw')
             lab = ctk.CTkLabel(main_canvas,text=self.bangdiem[i][0],font=('Roboto',14))
             lab.place(x=20,y=145+i*40)
-            main_canvas.create_line((80,140+i*40,80,180+i*40),fill='#348cd4')
+            main_canvas.create_line((80,140+i*40,80,180+i*40),fill='#348cd4',tags='draw')
             lab1 = ctk.CTkLabel(main_canvas,text=self.bangdiem[i][1],font=('Roboto',14))
             lab1.place(x=85,y=145+i*40)
-            main_canvas.create_line((350,140+i*40,350,180+i*40),fill='#348cd4')
+            main_canvas.create_line((350,140+i*40,350,180+i*40),fill='#348cd4',tags='draw')
             lab2 = ctk.CTkLabel(main_canvas,text=self.bangdiem[i][2],font=('Roboto',14))
             lab2.place(x=375,y=145+i*40)
-            main_canvas.create_line((410,140+i*40,410,180+i*40),fill='#348cd4')
+            main_canvas.create_line((410,140+i*40,410,180+i*40),fill='#348cd4',tags='draw')
 
             if self.bangdiem[i][3]!='' and self.bangdiem[i][4]!='':
-                dtk_he10 = round((float(self.bangdiem[i][3])+float(self.bangdiem[i][4]))/2,1)
+                dtk_he10 = round((float(self.bangdiem[i][3])+float(self.bangdiem[i][4]))/2+0000000000.1,1)
             else: 
                 dtk_he10=''
                 xuat_diemtb = False
             lab3 = ctk.CTkLabel(main_canvas,text=str(dtk_he10),font=('Roboto',14))
             lab3.place(x=450,y=145+i*40)
-            main_canvas.create_line((510,140+i*40,510,180+i*40),fill='#348cd4')
+            main_canvas.create_line((510,140+i*40,510,180+i*40),fill='#348cd4',tags='draw')
 
             if dtk_he10!='':
                 if float(dtk_he10)>=8.5:
@@ -102,7 +103,7 @@ class StudentScore:
             else: dtk_he_4=''
             lab4 = ctk.CTkLabel(main_canvas,text=str(dtk_he_4),font=('Roboto',14))
             lab4.place(x=550,y=145+i*40)
-            main_canvas.create_line((610,140+i*40,610,180+i*40),fill='#348cd4')
+            main_canvas.create_line((610,140+i*40,610,180+i*40),fill='#348cd4',tags='draw')
             if dtk_he_4!='':
                 if float(dtk_he_4)==4.0:
                     dtk_c = 'A'
@@ -116,7 +117,7 @@ class StudentScore:
             else: dtk_c=''
             lab5 = ctk.CTkLabel(main_canvas,text=dtk_c ,font=('Roboto',14))
             lab5.place(x=655,y=145+i*40)
-            main_canvas.create_line((710,140+i*40,710,180+i*40),fill='#348cd4')
+            main_canvas.create_line((710,140+i*40,710,180+i*40),fill='#348cd4',tags='draw')
     
             if dtk_c=='F' or dtk_c=='':
                 x_icon = Image.open(os.path.join(os.path.dirname(__file__), "assets", "blue_x.png"))
@@ -127,7 +128,7 @@ class StudentScore:
     
             lab6 = ctk.CTkLabel(main_canvas,text='',image=kq_icon_ctk)
             lab6.place(x=739,y=145+i*40)
-            main_canvas.create_line((780,140+i*40,780,180+i*40),fill='#348cd4')
+            main_canvas.create_line((780,140+i*40,780,180+i*40),fill='#348cd4',tags='draw')
             
             chitiet_button[self.bangdiem[i][0]] = ctk.CTkButton(main_canvas,text='',
                                  image=chitiet_icon_ctk,
@@ -139,8 +140,8 @@ class StudentScore:
             chitiet_button[self.bangdiem[i][0]].place(x=802,y=145+i*40)
             chitiet_button[self.bangdiem[i][0]].bind('<Enter>',lambda e,x=self.bangdiem[i][0]: chitiet_button[x].configure(image=zoomed_chitiet_icon_ctk))
             chitiet_button[self.bangdiem[i][0]].bind('<Leave>',lambda e,x=self.bangdiem[i][0]: chitiet_button[x].configure(image=chitiet_icon_ctk))
-            main_canvas.create_line((860,140+i*40,860,180+i*40),fill='#348cd4')
-            main_canvas.create_line((10,180+i*40,860,180+i*40),fill='#348cd4')
+            main_canvas.create_line((860,140+i*40,860,180+i*40),fill='#348cd4',tags='draw')
+            main_canvas.create_line((10,180+i*40,860,180+i*40),fill='#348cd4',tags='draw')
 
             #tính điểm dtb các hệ khi các môn đủ điểm
             if xuat_diemtb:

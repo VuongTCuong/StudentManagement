@@ -102,7 +102,7 @@ class RegisterSubject:
 
         next_page_button.bind('<Enter>',lambda e: next_page_button.configure(image=zoomed_next_icon_ctk))
         next_page_button.bind('<Leave>',lambda e: next_page_button.configure(image=next_icon_ctk))
-
+        
     def changeto_previouspage(self):
         if self.current_page-1>0:
             self.current_page-=1
@@ -159,7 +159,7 @@ class RegisterSubject:
                                                     height=25,
                                                     hover_color='#dbdbdb',
                                                     fg_color='transparent',
-                                                    command=lambda x=self.content[i][0]: self.student_join(x))
+                                                    command=lambda x=self.content[i][0],y=self.content[i][4]: self.student_join(x,y))
                 add_button_ar[self.content[i][0]].place(x=800,y=(i%10)*45+10)
                 add_button_ar[self.content[i][0]].bind('<Enter>',lambda e,x=self.content[i][0]: add_button_ar[x].configure(image=zoomed_add_icon_ctk))
                 add_button_ar[self.content[i][0]].bind('<Leave>',lambda e,x=self.content[i][0]: add_button_ar[x].configure(image=add_icon_ctk))
@@ -175,7 +175,7 @@ class RegisterSubject:
                                             command=lambda x=self.content[i][0]: self.cancel_join(x))
                 tick_button.place(x=800,y=(i%10)*45+10)
 
-    def student_join(self,current_lop):
+    def student_join(self,current_lop,sotc):
         current_mamon = self.studentjoinclass.get_mamon_by_lop(current_lop)[1]
 
         for i in self.content:
@@ -186,7 +186,13 @@ class RegisterSubject:
         if current_mamon in self.current_subject:
             messagebox.showinfo('Thông báo','Bạn đã đăng ký lớp dạy môn này!')
             return
-             
+        my_subject = [i for i in self.studentjoinclass.get_all_soluongsv() if i[0] in self.current_join]
+        tong_sotc = 0
+        for i in my_subject:
+            tong_sotc += i[4]
+        if tong_sotc+sotc>24:
+            messagebox.showinfo('Thông báo','Không được đăng ký quá 24 tín chỉ !')
+            return
         result = messagebox.askyesno("Xác nhận", "Bạn có muốn đăng ký lớp này không ?")
         if result:
             messagebox.showinfo('Thông báo','Đăng ký thành công!')

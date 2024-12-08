@@ -72,6 +72,8 @@ class StudentMgt:
         # self.email_entry = ctk.CTkEntry(frame,width=230)
         # Create a StringVar to track text field input (empty or not)
         self.text_var = ctk.StringVar()
+
+          
         self.email_entry = ctk.CTkEntry(
             frame,
             placeholder_text="Nhập Email",  
@@ -84,7 +86,7 @@ class StudentMgt:
             placeholder_text_color="#888888" , textvariable = self.text_var
         )
         self.email_entry.place(x=100,y=170)
-
+    
         khoa_lab = ctk.CTkLabel(frame,text='Khoa:')
         khoa_lab.place(x=10,y=210)
 
@@ -121,7 +123,6 @@ class StudentMgt:
         self.mail_button = ctk.CTkButton(frame,text='Liên hệ SV',width=90,command=self.open_contact_gui, state='disabled')
         self.mail_button.place(x=105,y=370)
         # Trace changes in the text variable
-        self.text_var.trace_add('write', self.update_button_state)
 
     def update_button_state(self, *args):
         """Enable or disable the button based on the entry field content."""
