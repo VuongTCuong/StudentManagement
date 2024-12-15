@@ -177,11 +177,11 @@ class RegisterSubject:
 
     def student_join(self,current_lop,sotc):
         current_mamon = self.studentjoinclass.get_mamon_by_lop(current_lop)[1]
-        
-        for i in self.content:
-            if current_lop == i[0] and i[10]>=i[8]:
-                messagebox.showinfo('Thông báo','Không thể đăng ký lớp này vì đã đầy!')
-                return
+        current_lop_idx = [i for i,val in enumerate(self.content) if val[0] == current_lop][0]
+
+        if self.content[current_lop_idx][10]>=self.content[current_lop_idx][8]:
+            messagebox.showinfo('Thông báo','Không thể đăng ký lớp này vì đã đầy!')
+            return
                 
         if current_mamon in self.current_subject:
             messagebox.showinfo('Thông báo','Bạn đã đăng ký lớp dạy môn này!')
