@@ -123,7 +123,7 @@ class StudentMgt:
         self.mail_button = ctk.CTkButton(frame,text='Liên hệ SV',width=90,command=self.open_contact_gui, state='disabled')
         self.mail_button.place(x=105,y=370)
         # Trace changes in the text variable
-
+        self.text_var.trace_add('write', self.update_button_state)
     def update_button_state(self, *args):
         """Enable or disable the button based on the entry field content."""
         if self.text_var.get().strip():  # Check if the entry is not empty

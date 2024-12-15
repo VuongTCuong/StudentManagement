@@ -69,13 +69,15 @@ class StudentProfile:
         hocki_namhoc_join = self.studentjoinclass.get_hocki_namhoc_joined(username)
         print(hocki_namhoc_join)
         thoigian_value = ["Học kì {0} - Năm học {1} - {2}".format(i[0],i[1],i[2]) for i in hocki_namhoc_join]
+        if thoigian_value==[]: thoigian_value.append('')
         thoigian_cb = ctk.CTkComboBox(self.chart_canvas,values=thoigian_value,width=270,height=30,font=('Roboto',15),state='readonly',command=lambda s:self.set_chartdiem(s))
         thoigian_cb.place(x=180,y=8)
         thoigian_cb.set(thoigian_value[0])
-        hk = 'Học kì {0}'.format(hocki_namhoc_join[0][0])
-        namhoc = 'Năm học {0} - {1}'.format(hocki_namhoc_join[0][1],hocki_namhoc_join[0][2])
-        self.bangdiem = self.studentscore.get_score_info(self.current_user,hk,namhoc)
-        self.set_chartdiem(thoigian_cb.get())
+        if thoigian_value[0]!='':
+            hk = 'Học kì {0}'.format(hocki_namhoc_join[0][0])
+            namhoc = 'Năm học {0} - {1}'.format(hocki_namhoc_join[0][1],hocki_namhoc_join[0][2])
+            self.bangdiem = self.studentscore.get_score_info(self.current_user,hk,namhoc)
+            self.set_chartdiem(thoigian_cb.get())
     def set_chartdiem(self,selection):
         hocki = selection[0:8]
         namhoc = selection[19:]
@@ -152,7 +154,7 @@ class StudentProfile:
         if i<=3:
             self.hover_detail.place(x=120+i*85,y=(335-dtb*2/0.1)-100)
         else:
-            self.hover_detail.place(x=60+i*85-(114+6*len(self.bangdiem[i][1])),y=(335-dtb*2/0.1)-100)
+            self.hover_detail.place(x=60+i*85-(114+7*len(self.bangdiem[i][1])),y=(335-dtb*2/0.1)-100)
         lab = ctk.CTkLabel(self.hover_detail,text='Mã môn học:',font=('Roboto',13,'bold'))
         lab.grid(row=0,column=0,sticky='nw',padx=15)
         lab1 = ctk.CTkLabel(self.hover_detail,text='Tên môn học:',font=('Roboto',13,'bold'))
